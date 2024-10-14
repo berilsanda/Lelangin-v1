@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
 
-import { auth } from "src/services/firebase";
+import { auth, updateUser } from "src/services/firebase";
 import { signOut, updateProfile } from "firebase/auth";
 import { colors, size, typography } from "src/data/globals";
 import { AccountStackParamList } from "src/navigations/AccountNavigator";
@@ -82,9 +82,13 @@ export default function Account({ navigation }: Props) {
     try {
       const pathToUpload = `User/${userData.uid}/Profil`;
       const photo = await uploadImageAsync(userImage!, pathToUpload, `photo`);
-
       const currentUser = auth.currentUser;
       await updateProfile(currentUser!, {
+        displayName: userName,
+        photoURL: photo,
+      });
+      await updateUser({
+        id: userData.uid,
         displayName: userName,
         photoURL: photo,
       });
@@ -148,7 +152,11 @@ export default function Account({ navigation }: Props) {
           <Text style={typography.label2}>
             {userData.displayName || "Belum ada nama"}
           </Text>
-          <Text style={{ ...typography.paragraph3, color: colors.textSecondary }}>{userData.email}</Text>
+          <Text
+            style={{ ...typography.paragraph3, color: colors.textSecondary }}
+          >
+            {userData.email}
+          </Text>
         </View>
         <MaterialCommunityIcons
           name="pencil-outline"

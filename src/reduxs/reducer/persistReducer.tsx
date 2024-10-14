@@ -12,7 +12,7 @@ const initialState = {
       zipCode: '',
     },
     createdAt: '',
-    favorites: [],
+    favorites: [] as string[],
     lastLogin:'',
     phoneNumber: '',
     updateAt: '',
@@ -30,9 +30,19 @@ export const persistSlice = createSlice({
     resetUser: (state) => {
       state.userData = initialState.userData;
     },
+    addRdxFavourite: (state, action) => {
+      if (!state.userData.favorites.includes(action.payload)) {
+        state.userData.favorites.push(action.payload);
+      }
+    },
+    removeRdxFavourite: (state, action) => {
+      state.userData.favorites = state.userData.favorites.filter(
+        (fav) => fav !== action.payload
+      );
+    },
   },
 });
 
-export const { setUser, resetUser } = persistSlice.actions;
+export const { setUser, resetUser, addRdxFavourite, removeRdxFavourite } = persistSlice.actions;
 
 export default persistSlice.reducer;

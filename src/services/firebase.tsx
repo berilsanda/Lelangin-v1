@@ -1,5 +1,6 @@
 import * as firebase from "firebase/app";
 import {
+  arrayRemove,
   arrayUnion,
   collection,
   doc,
@@ -99,6 +100,28 @@ export async function getUser(uid: string): Promise<DocumentData | null> {
   return null;
 }
 
+interface UpdateUserProps {
+  id: string;
+  photoURL?: string;
+  displayName?: string | null;
+}
+
+export async function updateUser({
+  id,
+  photoURL,
+  displayName,
+}: UpdateUserProps) {
+  try {
+    await updateDoc(doc(database, "user", id), {
+      photoURL,
+      displayName,
+      updateAt: new Date(),
+    });
+  } catch (error: any) {
+    Alert.alert("Kesalahan", error.message);
+  }
+}
+
 export async function addProducts(body: any) {
   try {
     await setDoc(doc(database, "products", body.id), body);
@@ -123,7 +146,30 @@ export async function addBid({ id, currentBid, userId }: AddBidProps) {
       userId: userId,
     });
 
-    await updateDoc(doc(database, "products", id), { currentBid, bidder: arrayUnion(bidId) });
+    await updateDoc(doc(database, "products", id), {
+      currentBid,
+      bidder: arrayUnion(bidId),
+    });
+  } catch (error: any) {
+    Alert.alert("Kesalahan", error.message);
+  }
+}
+
+export async function addFavourite(id: string, itemId: string) {
+  try {
+    await updateDoc(doc(database, "user", id), {
+      favorites: arrayUnion(itemId),
+    });
+  } catch (error: any) {
+    Alert.alert("Kesalahan", error.message);
+  }
+}
+
+export async function removeFavourite(id: string, itemId: string) {
+  try {
+    await updateDoc(doc(database, "user", id), {
+      favorites: arrayRemove(itemId),
+    });
   } catch (error: any) {
     Alert.alert("Kesalahan", error.message);
   }

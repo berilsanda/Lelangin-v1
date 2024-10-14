@@ -15,13 +15,19 @@ import { size, typography } from "src/data/globals";
 import ItemCard from "src/components/molecules/Card/ItemCard";
 import {
   collection,
+  endAt,
   getDocs,
+  orderBy,
   query,
+  startAt,
   where,
 } from "firebase/firestore";
 import { database } from "src/services/firebase";
 import EmptyState from "src/components/molecules/EmptyState";
 import serializeTime from "src/utils/serializeTime";
+import { useSelector } from "react-redux";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { StackParamList } from "src/navigations/MainNavigator";
 
 export interface ProductType {
   auctionEnd: string | null;
@@ -40,9 +46,16 @@ export interface ProductType {
   winner: string;
 }
 
-export default function Home() {
+type Props = NativeStackScreenProps<StackParamList, "HomeNav">;
+
+export default function Home({ navigation }: Props) {
+  const shouldHomeUpdate = useSelector(
+    (state: any) => state.temp.homeUpdateState
+  );
   const [loading, setLoading] = useState(false);
+  const [toggle, setToggle] = useState(false);
   const [items, setItems] = useState<ProductType[]>([]);
+  const [search, setSearch] = useState("");
 
   async function fetchAuction() {
     setLoading(true);
@@ -50,7 +63,10 @@ export default function Home() {
       const q = query(
         collection(database, "products"),
         where("status", "==", "active"),
-        where("auctionEnd", ">=", new Date())
+        where("auctionEnd", ">=", new Date()),
+        orderBy("title"),
+        startAt(search),
+        endAt(search + "\uf8ff")
       );
       const querySnapshot = await getDocs(q);
 
@@ -78,7 +94,7 @@ export default function Home() {
 
       setItems(productItems);
     } catch (error: any) {
-      console.log(error.message)
+      console.log(error.message);
       Alert.alert("Kesalahan", error.message);
     } finally {
       setLoading(false);
@@ -89,7 +105,7 @@ export default function Home() {
     (async function () {
       await fetchAuction();
     })();
-  }, []);
+  }, [toggle, shouldHomeUpdate]);
 
   const [refreshing, setRefreshing] = useState(false);
   async function onRefresh() {
@@ -107,13 +123,19 @@ export default function Home() {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <TextInputs
-          value=""
+          value={search}
           placeholder="Cari lelang..."
-          onChangeText={() => {}}
+          onChangeText={(val) => setSearch(val)}
+          onPressIcon={() => setToggle((prev) => !prev)}
           icon="magnify"
           style={{ flex: 1, marginRight: size.l, marginBottom: 0 }}
         />
-        <Feather name="heart" size={24} style={{ marginRight: 16 }} />
+        <Feather
+          name="heart"
+          size={24}
+          style={{ marginRight: 16 }}
+          onPress={() => navigation.navigate("Favourites")}
+        />
         <Feather name="bell" size={24} />
       </View>
 
@@ -126,7 +148,9 @@ export default function Home() {
             <FlatList
               keyExtractor={(item) => item.id}
               data={items}
-              refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
               numColumns={2}
               showsVerticalScrollIndicator={false}
               style={{ flexGrow: 2 }}
@@ -138,9 +162,7 @@ export default function Home() {
                 />
               }
               renderItem={({ item }) => {
-                return (
-                  <ItemCard item={item}/>
-                );
+                return <ItemCard item={item} />;
               }}
             />
           )}

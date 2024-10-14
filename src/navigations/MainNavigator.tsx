@@ -6,6 +6,7 @@ import HomeNavigator from "./HomeNavigator";
 import UserDetail from "src/screens/Register/UserDetail";
 import AddAuction from "src/screens/AddAuction";
 import DetailAuction from "src/screens/DetailAuction";
+import FavouriteAuction from "src/screens/FavouriteAuction";
 
 export type StackParamList = {
   HomeNav: undefined;
@@ -15,6 +16,7 @@ export type StackParamList = {
   SplashScreen: undefined;
   TambahLelang: undefined;
   DetailLelang: { id: string };
+  Favourites: undefined;
 };
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -52,6 +54,15 @@ export default function MainNavigator() {
           headerShown: true,
           headerShadowVisible: false,
           title: "Detail Lelang",
+        }}
+      />
+      <Stack.Screen
+        name="Favourites"
+        component={FavouriteAuction}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          title: "Lelang Disimpan",
         }}
       />
     </Stack.Navigator>

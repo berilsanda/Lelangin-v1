@@ -15,13 +15,14 @@ import {
 import AppDateTimePicker from "src/components/atoms/App/AppDateTimePicker";
 import PictureListUploader from "src/components/molecules/PictureListUploader";
 import moment from "moment";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addProducts } from "src/services/firebase";
 import { STORAGE_BUCKET } from "@env";
 import uploadImageAsync from "src/services/uploadImageAsync";
 import { StackParamList } from "src/navigations/MainNavigator";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import combineDateTime from "src/utils/combineDateTime";
+import { toggleHomeUpdate } from "src/reduxs/reducer/tempReducer";
 
 type FormData = {
   pictureList: string[];
@@ -44,7 +45,7 @@ const schema = yup.object().shape({
   startingBid: yup
     .number()
     .required("Silahkan masukkan harga awal.")
-    .min(1000, 'Minimal harga awal Rp 1.000')
+    .min(1000, "Minimal harga awal Rp 1.000")
     .test(
       "is-divisible-by-100",
       "Masukkan nilai yang dapat dibagi 100.",
@@ -55,7 +56,7 @@ const schema = yup.object().shape({
   stepBid: yup
     .number()
     .required("Silahkan masukkan kelipatan harga.")
-    .min(1000, 'Minimal kelipatan harga Rp 1.000')
+    .min(1000, "Minimal kelipatan harga Rp 1.000")
     .test(
       "is-divisible-by-100",
       "Masukkan nilai yang dapat dibagi 100.",
@@ -80,8 +81,8 @@ export default function AddAuction({ navigation }: Props) {
   // Todo :
   // - Fix validation for conditions
   // - add loading spinner animations
-  // - auto refresh home page after add item
 
+  const dispatch = useDispatch();
   const { control, handleSubmit, reset } = useForm<FormData>({
     resolver: yupResolver(schema),
   });
@@ -130,6 +131,7 @@ export default function AddAuction({ navigation }: Props) {
       };
 
       await addProducts(sendData);
+      dispatch(toggleHomeUpdate());
 
       reset();
       setConditons(undefined);
@@ -175,6 +177,7 @@ export default function AddAuction({ navigation }: Props) {
           disabled={loading}
           multiline
           numberOfLines={5}
+          maxLength={320}
         />
         <RadioGroups
           label="Kondisi Barang"

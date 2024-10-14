@@ -2,12 +2,13 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "src/navigations/MainNavigator";
 import ImageLightbox from "src/components/atoms/ImageLightbox";
@@ -21,18 +22,30 @@ import {
   getDoc,
   onSnapshot,
 } from "firebase/firestore";
-import { database } from "src/services/firebase";
+import { addFavourite, database, removeFavourite } from "src/services/firebase";
 import serializeTime from "src/utils/serializeTime";
 import BiddingModal from "src/components/molecules/BiddingModal";
+import AuctionerCard from "src/components/molecules/Card/AuctionerCard";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addRdxFavourite,
+  removeRdxFavourite,
+} from "src/reduxs/reducer/persistReducer";
 
 type Props = NativeStackScreenProps<StackParamList, "DetailLelang">;
 
 const WINDOW_WIDTH = Dimensions.get("window").width;
 
-export default function DetailAuction({ route: { params } }: Props) {
+export default function DetailAuction({
+  navigation,
+  route: { params },
+}: Props) {
   const [item, setItem] = useState<DocumentData>();
   const [loading, setLoading] = useState(true);
-
+  const dispatch = useDispatch();
+  const userData = useSelector((state: any) => state.persist.userData);
+  const isFavorite: boolean = userData.favorites.includes(params.id);
   async function fetchData() {
     setLoading(true);
     try {
@@ -44,6 +57,7 @@ export default function DetailAuction({ route: { params } }: Props) {
         if (productData.exists()) {
           let fetchedItem = productData.data();
           fetchedItem.auctionEnd = serializeTime(fetchedItem.auctionEnd);
+          fetchedItem.auctioner = await fetchUserData(fetchedItem.createdBy);
           setItem(fetchedItem);
         }
       })();
@@ -51,6 +65,24 @@ export default function DetailAuction({ route: { params } }: Props) {
       Alert.alert("Kesalahan", error.message);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchUserData(userId: string) {
+    try {
+      const userData = await getDoc(doc(collection(database, "user"), userId));
+
+      if (userData.exists()) {
+        let fetchedUser = userData.data();
+        fetchedUser.createdAt = serializeTime(fetchedUser.createdAt);
+        fetchedUser.updateAt = serializeTime(fetchedUser.updateAt);
+        fetchedUser.lastLogin = serializeTime(fetchedUser.lastLogin);
+        return fetchedUser;
+      }
+      return null;
+    } catch (error: any) {
+      Alert.alert("Kesalahan", error.message);
+      return null;
     }
   }
 
@@ -81,6 +113,34 @@ export default function DetailAuction({ route: { params } }: Props) {
     };
   }, [params.id]);
 
+  async function toggleFavourite(userId: string, itemId: string) {
+    try {
+      if (!isFavorite) {
+        dispatch(addRdxFavourite(itemId));
+        await addFavourite(userId, itemId);
+      } else {
+        dispatch(removeRdxFavourite(itemId));
+
+        await removeFavourite(userId, itemId);
+      }
+    } catch (error: any) {
+      Alert.alert("Kesalahan", error.message);
+    }
+  }
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <MaterialCommunityIcons
+          name={isFavorite ? "heart" : "heart-outline"}
+          color={isFavorite ? colors.warning : colors.surfaceInverse}
+          size={24}
+          onPress={() => toggleFavourite(userData.uid, params.id)}
+        />
+      ),
+    });
+  }, [navigation, isFavorite]);
+
   return (
     <View style={{ flex: 1 }}>
       {loading ? (
@@ -96,7 +156,7 @@ export default function DetailAuction({ route: { params } }: Props) {
                 pagingEnabled
                 decelerationRate={"fast"}
               >
-                {item?.images.map((image: string) => {
+                {item?.images?.map((image: string) => {
                   return (
                     <ImageLightbox
                       key={image}
@@ -144,12 +204,22 @@ export default function DetailAuction({ route: { params } }: Props) {
 
               <View style={styles.separator} />
 
-              <Text style={typography.label2}>Deskripsi</Text>
+              <Text style={styles.sectionLabel}>Deskripsi</Text>
               <Text
-                style={[typography.paragraph3, { color: colors.textSecondary }]}
+                style={[
+                  typography.paragraph3,
+                  { color: colors.textSecondary, marginBottom: size.l },
+                ]}
               >
                 {item?.description}
               </Text>
+
+              <Text style={styles.sectionLabel}>Pelelang</Text>
+              <AuctionerCard
+                name={item?.auctioner?.displayName || "-"}
+                city={item?.auctioner?.address?.city || "-"}
+                image={item?.auctioner?.photoURL}
+              />
             </View>
           </ScrollView>
           <BiddingModal
@@ -191,5 +261,9 @@ const styles = StyleSheet.create({
   subLabel: {
     ...typography.paragraph4,
     color: colors.textSecondary,
+  },
+  sectionLabel: {
+    ...typography.label2,
+    marginBottom: size.m,
   },
 });
