@@ -12,6 +12,7 @@ interface AppModalsProps extends ModalBaseProps {
   onDismiss: () => void;
   children: any;
   style?: ViewStyle;
+  position?: "center" | "bottom";
 }
 
 const AppModals: React.FC<AppModalsProps> = ({
@@ -19,6 +20,7 @@ const AppModals: React.FC<AppModalsProps> = ({
   onDismiss,
   children,
   style: addOnStyle,
+  position = "center",
   ...modalBaseProps
 }) => {
   return (
@@ -29,11 +31,16 @@ const AppModals: React.FC<AppModalsProps> = ({
       statusBarTranslucent
       {...modalBaseProps}
     >
-      <TouchableWithoutFeedback
-        onPress={onDismiss}
-      >
-        <View style={[StyleSheet.absoluteFillObject, styles.modalContainer, addOnStyle]}>
-          {children}
+      <TouchableWithoutFeedback onPress={onDismiss}>
+        <View
+          style={[
+            StyleSheet.absoluteFillObject,
+            styles.modalContainer,
+            { justifyContent: position == "center" ? "center" : "flex-end" },
+            addOnStyle,
+          ]}
+        >
+          <TouchableWithoutFeedback>{children}</TouchableWithoutFeedback>
         </View>
       </TouchableWithoutFeedback>
     </Modal>
@@ -44,8 +51,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: 'rgba(0,0,0,0.5)', 
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
 });
 

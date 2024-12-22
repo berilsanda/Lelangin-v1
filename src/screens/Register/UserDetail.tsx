@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Alert,
   SafeAreaView,
@@ -9,21 +10,20 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
 import { AppTextInputs, Buttons } from "components/atoms";
 import { colors, size, typography } from "data/globals";
-import { auth, createUser, UserRegister } from "src/services/firebase";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StackParamList } from "src/navigations/MainNavigator";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import * as ImagePicker from "expo-image-picker";
-import uploadImageAsync from "src/services/uploadImageAsync";
-import { updateProfile } from "firebase/auth";
-import { useDispatch } from "react-redux";
 import { setUser } from "src/reduxs/reducer/persistReducer";
+import { StackParamList } from "navigations/MainNavigator";
+import { createUser, UserRegister } from "services/firebase";
+import uploadImageAsync from "services/uploadImageAsync";
+import pickImage from "utils/imagePicker";
 
 const schema = yup.object().shape({
   phoneNumber: yup.string().required("Silahkan masukkan nomor telepon anda"),
@@ -43,26 +43,16 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
     resolver: yupResolver(schema),
   });
 
-  async function pickImage() {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.5,
-    });
-
-    if (!result.canceled) {
-      setUserImage(result.assets[0].uri);
-    }
-  }
-
   async function onSubmit(data: {
     phoneNumber: string;
     streetAddress: string;
     city: string;
     zipCode: string;
   }) {
+    if (userImage == null) {
+      return Alert.alert('', 'Silahkan menambahkan foto!')
+    }
+
     setLoading(true);
     try {
       const registerUser = await UserRegister(params.email, params.password);
@@ -90,13 +80,14 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
 
         await createUser(sendData);
 
-        const currentUser = auth.currentUser;
-        await updateProfile(currentUser!, {
-          displayName: params.displayName,
-          photoURL: photo,
-        });
-
-        dispatch(setUser(sendData));
+        dispatch(
+          setUser({
+            ...sendData,
+            createdAt: sendData.createdAt.toDateString,
+            lastLogin: sendData.lastLogin.toDateString,
+            updatedAt: sendData.updateAt.toDateString,
+          })
+        );
       }
       reset();
       navigation.navigate("SplashScreen");
@@ -112,10 +103,16 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.subtitle}>Langkah 2 dari 2</Text>
         <Text style={styles.title}>Data Pengguna</Text>
+
         <View>
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => pickImage()}
+            onPress={async () => {
+              let pickedImage = await pickImage("galery");
+              if (pickedImage != null) {
+                setUserImage(pickedImage);
+              }
+            }}
             style={{ alignSelf: "center", marginBottom: size.l }}
           >
             {!!userImage ? (
@@ -144,6 +141,7 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
             </TouchableOpacity>
           ) : null}
         </View>
+
         {/** TODO: create app text input mask */}
         <AppTextInputs
           name="phoneNumber"
@@ -153,6 +151,7 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
           control={control}
           disabled={loading}
         />
+
         {/** TODO: integrate google place autocomplete */}
         <AppTextInputs
           name="streetAddress"
@@ -161,6 +160,7 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
           control={control}
           disabled={loading}
         />
+
         {/** TODO: app picker for city list */}
         <AppTextInputs
           name="city"
@@ -179,6 +179,7 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
           disabled={loading}
         />
       </ScrollView>
+      
       <View style={{ paddingHorizontal: size.xl }}>
         <Buttons
           label="Daftar"

@@ -1,9 +1,10 @@
 import React from "react";
 import { TextInputProps, ViewStyle } from "react-native";
 import { Control, Controller } from "react-hook-form";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import TextInputMasks from "../TextInputMasks";
 import { TextInputMaskOptionProp, TextInputMaskTypeProp } from "react-native-masked-text";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
+import TextInputMasks from "../TextInputMasks";
 
 interface AppTextInputMasksProps extends TextInputProps {
   name: string;

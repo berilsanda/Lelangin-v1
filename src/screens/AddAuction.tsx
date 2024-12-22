@@ -1,19 +1,18 @@
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import uuid from "react-native-uuid";
 
-import { colors, size } from "src/data/globals";
+import { colors, size, typography } from "src/data/globals";
 import {
   AppTextInputs,
   AppTextInputMasks,
   Buttons,
-  RadioGroups,
 } from "src/components/atoms";
 import AppDateTimePicker from "src/components/atoms/App/AppDateTimePicker";
-import PictureListUploader from "src/components/molecules/PictureListUploader";
+import PictureListUploader from "src/components/molecules/PictureListUploader/PictureListUploader";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { addProducts } from "src/services/firebase";
@@ -23,11 +22,13 @@ import { StackParamList } from "src/navigations/MainNavigator";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import combineDateTime from "src/utils/combineDateTime";
 import { toggleHomeUpdate } from "src/reduxs/reducer/tempReducer";
+import RadioGroups from "src/components/molecules/RadioGroups";
 
 type FormData = {
   pictureList: string[];
   title: string;
   description: string;
+  conditions: string;
   startingBid: number;
   stepBid: number;
   timeAuctionEnd: string;
@@ -42,6 +43,7 @@ const schema = yup.object().shape({
     .required("Harap pilih foto."),
   title: yup.string().required("Silahkan isi nama barang."),
   description: yup.string().required("Silahkan masukkan deskripsi barang."),
+  conditions: yup.string().required('Silahkan pilih kondisi barang.'),
   startingBid: yup
     .number()
     .required("Silahkan masukkan harga awal.")
@@ -79,7 +81,6 @@ type Props = NativeStackScreenProps<StackParamList, "TambahLelang">;
 
 export default function AddAuction({ navigation }: Props) {
   // Todo :
-  // - Fix validation for conditions
   // - add loading spinner animations
 
   const dispatch = useDispatch();
@@ -88,7 +89,6 @@ export default function AddAuction({ navigation }: Props) {
   });
 
   const [loading, setLoading] = useState(false);
-  const [conditions, setConditons] = useState();
   const userData = useSelector((state: any) => state.persist.userData);
 
   async function onSubmit(data: FormData) {
@@ -117,7 +117,7 @@ export default function AddAuction({ navigation }: Props) {
         id: productId,
         auctionEnd: combineDateTime(data.dateAuctionEnd, data.timeAuctionEnd),
         bidder: [],
-        condition: conditions,
+        condition: data.conditions,
         createdAt: new Date(),
         createdBy: userData.uid,
         currentBid: 0,
@@ -134,7 +134,6 @@ export default function AddAuction({ navigation }: Props) {
       dispatch(toggleHomeUpdate());
 
       reset();
-      setConditons(undefined);
       Alert.alert("Berhasil", "Lelang anda berhasil ditambah!");
       navigation.goBack();
     } catch (error: any) {
@@ -179,15 +178,28 @@ export default function AddAuction({ navigation }: Props) {
           numberOfLines={5}
           maxLength={320}
         />
-        <RadioGroups
-          label="Kondisi Barang"
-          data={[
-            { label: "Baru", value: "new" },
-            { label: "Bekas", value: "used" },
-          ]}
-          value={conditions}
-          setValue={setConditons}
-          style={{ flexDirection: "row" }}
+
+        <Controller
+          name="conditions"
+          control={control}
+          defaultValue={'new'}
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+            <>
+              <RadioGroups
+                label="Kondisi Barang"
+                data={[
+                  { label: "Baru", value: "new" },
+                  { label: "Bekas", value: "used" },
+                ]}
+                value={value}
+                setValue={onChange}
+                style={{ flexDirection: "row" }}
+              />
+              {error ? (
+                <Text style={styles.errorText}>{error.message}</Text>
+              ) : null}
+            </>
+          )}
         />
 
         <View style={styles.separator} />
@@ -274,5 +286,10 @@ const styles = StyleSheet.create({
     marginBottom: size.l,
     borderTopWidth: 1,
     borderColor: colors.grey.light,
+  },
+  errorText: {
+    marginTop: size.s,
+    color: colors.warning,
+    ...typography.paragraph3,
   },
 });

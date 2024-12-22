@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 
-// Helper Function to serialize Firestore Timestamp data
+// Serialize Firestore Timestamp data
 // to avoid error when used with redux or passing it as params
 // between screens
 //

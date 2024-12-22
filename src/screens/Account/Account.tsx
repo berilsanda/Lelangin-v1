@@ -11,18 +11,18 @@ import {
 import React, { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { CommonActions } from "@react-navigation/native";
-import Feather from "@expo/vector-icons/Feather";
 import { useDispatch, useSelector } from "react-redux";
+import { signOut } from "firebase/auth";
+import Feather from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import * as ImagePicker from "expo-image-picker";
 
-import { auth, updateUser } from "src/services/firebase";
-import { signOut, updateProfile } from "firebase/auth";
-import { colors, size, typography } from "src/data/globals";
-import { AccountStackParamList } from "src/navigations/AccountNavigator";
 import { TextInputs, AppModals, Buttons } from "components/atoms";
+import { colors, size, typography } from "data/globals";
+import { AccountStackParamList } from "navigations/AccountNavigator";
 import { resetUser, setUser } from "src/reduxs/reducer/persistReducer";
-import uploadImageAsync from "src/services/uploadImageAsync";
+import { auth, updateUser } from "services/firebase";
+import uploadImageAsync from "services/uploadImageAsync";
+import pickImage from "utils/imagePicker";
 
 type Props = NativeStackScreenProps<AccountStackParamList, "Account">;
 
@@ -64,29 +64,21 @@ export default function Account({ navigation }: Props) {
     }
   }
 
-  async function pickImage() {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      quality: 0.5,
-    });
-
-    if (!result.canceled) {
-      setUserImage(result.assets[0].uri);
-    }
-  }
-
   async function onSubmit() {
+    //Validation
+    if (userImage == null || userName!.trim().length == 0) {
+      return Alert.alert("", "Data tidak boleh kosong!");
+    }
+
+    if (userName!.trim().length < 4) {
+      return Alert.alert("", "Nama minimal berisi 4 karakter!");
+    }
+
     setLoadingModal(true);
     try {
       const pathToUpload = `User/${userData.uid}/Profil`;
       const photo = await uploadImageAsync(userImage!, pathToUpload, `photo`);
-      const currentUser = auth.currentUser;
-      await updateProfile(currentUser!, {
-        displayName: userName,
-        photoURL: photo,
-      });
+
       await updateUser({
         id: userData.uid,
         displayName: userName,
@@ -148,6 +140,7 @@ export default function Account({ navigation }: Props) {
             />
           </View>
         )}
+
         <View style={{ flex: 1 }}>
           <Text style={typography.label2}>
             {userData.displayName || "Belum ada nama"}
@@ -158,6 +151,7 @@ export default function Account({ navigation }: Props) {
             {userData.email}
           </Text>
         </View>
+
         <MaterialCommunityIcons
           name="pencil-outline"
           color={colors.grey.dark}
@@ -180,10 +174,11 @@ export default function Account({ navigation }: Props) {
 
       <AppModals
         visible={modalVisible}
-        onDismiss={() => onCloseModal()}
+        onDismiss={() => (loadingModal ? null : onCloseModal())}
         style={{ paddingHorizontal: size.xl }}
       >
         <View style={styles.modalContainer}>
+          
           <View style={styles.modalHeader}>
             <Text style={typography.label3}>Edit Profil</Text>
             <MaterialCommunityIcons
@@ -194,10 +189,16 @@ export default function Account({ navigation }: Props) {
           </View>
 
           <View>
+            {/* Image Selector */}
             <View>
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => pickImage()}
+                onPress={async () => {
+                  let pickedImage = await pickImage("galery");
+                  if (pickedImage != null) {
+                    setUserImage(pickedImage);
+                  }
+                }}
                 style={{ alignSelf: "center", marginBottom: size.l }}
               >
                 {!!userImage ? (
@@ -226,11 +227,14 @@ export default function Account({ navigation }: Props) {
                 </TouchableOpacity>
               ) : null}
             </View>
+
+            {/* Username Input */}
             <TextInputs
-              value={userName || userData.displayName}
+              value={userName ?? ""}
               placeholder="Masukkan nama anda"
               onChangeText={(val) => setUserName(val)}
             />
+
             <Buttons
               label="Simpan"
               onPress={() => onSubmit()}

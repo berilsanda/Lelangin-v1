@@ -28,9 +28,7 @@ export default function SplashScreen({ navigation }: Props) {
           ...userFirestoreData,
           uid: user.uid,
           email: user.email,
-          emailVerified: user.emailVerified,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
+          emailVerified: user.emailVerified
         };
 
         currentUser.createdAt = serializeTime(currentUser.createdAt)?.toString();

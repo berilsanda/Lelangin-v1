@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Platform, TextInputProps, ViewStyle } from "react-native";
 import { Control, Controller } from "react-hook-form";
-import TextInputs from "../TextInputs";
-import moment from "moment";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import moment from "moment";
+
+import TextInputs from "../TextInputs";
 
 interface DatePickerOptions {
   minimumDate?: Date;
@@ -39,15 +40,13 @@ const AppDateTimePicker: React.FC<AppDateTimePickerProps> = ({
   ...props
 }) => {
   const [show, setShow] = useState(false);
+
   return (
     <Controller
       name={name}
       defaultValue={defaultValue}
       control={control}
-      render={({
-        field: { onChange, value },
-        fieldState: { error },
-      }) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <>
           <TextInputs
             label={label}
@@ -65,20 +64,27 @@ const AppDateTimePicker: React.FC<AppDateTimePickerProps> = ({
             style={style}
             inputStyle={{ color: "black" }}
           />
+
           {show && (
             <DateTimePicker
-              value={!value ? new Date() : new Date(value)}
+              value={value ? new Date(value) : new Date()}
               mode={type}
               is24Hour={true}
               display="default"
               {...props}
               onChange={(event, selectedValue) => {
+                
                 setShow(Platform.OS === "ios");
+
                 if (event.type === "dismissed") {
                   return;
                 }
+
+                // Saving value to Controller
                 onChange(selectedValue);
-                // For props
+
+                // Selected value will be passed as props
+                // to parent component
                 onSelectedDate(selectedValue);
               }}
             />

@@ -5,9 +5,10 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { colors, size, typography } from "src/data/globals";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { NumericFormat } from "react-number-format";
+
+import { colors, size, typography } from "src/data/globals";
 
 interface StepperProps {
   value: number;

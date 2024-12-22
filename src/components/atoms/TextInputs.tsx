@@ -10,8 +10,9 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { colors, size, typography } from "data/globals";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
+import { colors, size, typography } from "data/globals";
 
 interface TextInputsProps extends TextInputProps {
   label?: string;

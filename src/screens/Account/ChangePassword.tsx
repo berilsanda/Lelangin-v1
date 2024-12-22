@@ -1,18 +1,19 @@
-import { Alert, StyleSheet, View } from "react-native";
 import React, { useLayoutEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Alert, StyleSheet, View } from "react-native";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { AppTextInputs, Buttons } from "components/atoms";
-import { colors, size } from "src/data/globals";
+import { useForm } from "react-hook-form";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { AccountStackParamList } from "src/navigations/AccountNavigator";
-import { auth } from "src/services/firebase";
 import {
   EmailAuthProvider,
   reauthenticateWithCredential,
   updatePassword,
 } from "firebase/auth";
+
+import { AppTextInputs, Buttons } from "components/atoms";
+import { colors, size } from "data/globals";
+import { AccountStackParamList } from "navigations/AccountNavigator";
+import { auth } from "services/firebase";
 
 type Props = NativeStackScreenProps<AccountStackParamList, "ChangePassword">;
 
@@ -56,6 +57,7 @@ export default function ChangePassword({ navigation }: Props) {
         display: "none",
       },
     });
+    
     return () =>
       navigation.getParent()?.setOptions({
         tabBarStyle: undefined,

@@ -2,7 +2,7 @@ import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { colors, size, typography } from "src/data/globals";
 
-type AuctionerCardProps = {
+interface AuctionerCardProps {
   image: string;
   name: string;
   city: string;

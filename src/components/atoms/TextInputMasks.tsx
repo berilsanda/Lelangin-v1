@@ -8,13 +8,14 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { colors, size, typography } from "data/globals";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {
   TextInputMask,
   TextInputMaskOptionProp,
   TextInputMaskTypeProp,
 } from "react-native-masked-text";
+
+import { colors, size, typography } from "data/globals";
 
 interface TextInputMasksProps extends TextInputProps {
   label?: string;

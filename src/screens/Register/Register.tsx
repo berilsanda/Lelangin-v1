@@ -1,3 +1,4 @@
+import React from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -6,13 +7,13 @@ import {
   StatusBar as Bar,
   View,
 } from "react-native";
-import React from "react";
-import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import { AppTextInputs, Buttons } from "components/atoms";
 import { colors, size, typography } from "data/globals";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "src/navigations/MainNavigator";
 
 export interface UserRegisterData {
@@ -59,6 +60,7 @@ export default function Register({ navigation }: Props) {
       <ScrollView style={styles.container}>
         <Text style={styles.subtitle}>Langkah 1 dari 2</Text>
         <Text style={styles.title}>Data Akun</Text>
+        
         <AppTextInputs
           name="displayName"
           label="Nama Lengkap"
@@ -86,6 +88,7 @@ export default function Register({ navigation }: Props) {
           control={control}
         />
       </ScrollView>
+
       <View style={{ paddingHorizontal: size.xl }}>
         <Text
           style={{
@@ -103,6 +106,7 @@ export default function Register({ navigation }: Props) {
             Masuk disini.
           </Text>
         </Text>
+
         <Buttons
           label="Lanjut"
           onPress={handleSubmit(onSubmit)}

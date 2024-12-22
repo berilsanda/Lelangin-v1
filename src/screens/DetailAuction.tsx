@@ -1,20 +1,18 @@
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   Dimensions,
-  Image,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import React, { useEffect, useLayoutEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StackParamList } from "src/navigations/MainNavigator";
-import ImageLightbox from "src/components/atoms/ImageLightbox";
-import { colors, size, typography } from "src/data/globals";
 import { NumericFormat } from "react-number-format";
-import CountdownTimer from "src/components/atoms/CountdownTimer";
+import { useDispatch, useSelector } from "react-redux";
 import {
   collection,
   doc,
@@ -22,16 +20,25 @@ import {
   getDoc,
   onSnapshot,
 } from "firebase/firestore";
-import { addFavourite, database, removeFavourite } from "src/services/firebase";
-import serializeTime from "src/utils/serializeTime";
-import BiddingModal from "src/components/molecules/BiddingModal";
-import AuctionerCard from "src/components/molecules/Card/AuctionerCard";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { useDispatch, useSelector } from "react-redux";
+
+import { CountdownTimer, ImageLightbox } from "components/atoms";
+import BiddingModal from "molecules/BiddingModal";
+import AuctionerCard from "molecules/Card/AuctionerCard";
+import { colors, size, typography } from "src/data/globals";
+import { StackParamList } from "src/navigations/MainNavigator";
 import {
   addRdxFavourite,
   removeRdxFavourite,
 } from "src/reduxs/reducer/persistReducer";
+import { addFavourite, database, removeFavourite } from "src/services/firebase";
+import serializeTime from "src/utils/serializeTime";
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 type Props = NativeStackScreenProps<StackParamList, "DetailLelang">;
 
@@ -43,9 +50,11 @@ export default function DetailAuction({
 }: Props) {
   const [item, setItem] = useState<DocumentData>();
   const [loading, setLoading] = useState(true);
+
   const dispatch = useDispatch();
   const userData = useSelector((state: any) => state.persist.userData);
   const isFavorite: boolean = userData.favorites.includes(params.id);
+
   async function fetchData() {
     setLoading(true);
     try {
@@ -141,6 +150,35 @@ export default function DetailAuction({
     });
   }, [navigation, isFavorite]);
 
+  //Handle carousel page
+  const [currentPage, setCurrentPage] = useState(1);
+  function onScrollCarousel(event: NativeSyntheticEvent<NativeScrollEvent>) {
+    let currPage = Math.round(event.nativeEvent.contentOffset.x / WINDOW_WIDTH);
+    setCurrentPage(currPage + 1);
+  }
+
+  const [currBid, setCurrBid] = useState(
+    item?.currentBid == 0 ? item?.startingBid : item?.currentBid
+  );
+
+  const translateY = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  useEffect(() => {
+    translateY.value = withTiming(-50, { duration: 250 }, () => {
+      if (item?.currentBid != 0) {
+        runOnJS(setCurrBid)(item?.currentBid);
+      } else {
+        runOnJS(setCurrBid)(item?.startingBid);
+      }
+      translateY.value = 50;
+      translateY.value = withTiming(0, { duration: 250 });
+    });
+  }, [item?.currentBid]);
+
   return (
     <View style={{ flex: 1 }}>
       {loading ? (
@@ -155,6 +193,7 @@ export default function DetailAuction({
                 showsHorizontalScrollIndicator={false}
                 pagingEnabled
                 decelerationRate={"fast"}
+                onMomentumScrollEnd={(e) => onScrollCarousel(e)}
               >
                 {item?.images?.map((image: string) => {
                   return (
@@ -170,6 +209,10 @@ export default function DetailAuction({
                   );
                 })}
               </ScrollView>
+
+              <View style={styles.carouselIndicator}>
+                <Text>{`${currentPage} / ${item?.images?.length || 0}`}</Text>
+              </View>
             </View>
 
             {/** Content */}
@@ -180,20 +223,21 @@ export default function DetailAuction({
                 <View style={{ flex: 1 }}>
                   <Text style={styles.subLabel}>Bid Tertinggi</Text>
                   <NumericFormat
-                    value={
-                      item?.currentBid == 0
-                        ? item?.startingBid
-                        : item?.currentBid
-                    }
+                    value={currBid}
                     displayType={"text"}
                     prefix={"Rp "}
                     thousandSeparator="."
                     decimalSeparator=","
                     renderText={(val) => (
-                      <Text style={styles.bidValue}>{val}</Text>
+                      <View style={{ overflow: "hidden" }}>
+                        <Animated.Text style={[styles.bidValue, animatedStyle]}>
+                          {val}
+                        </Animated.Text>
+                      </View>
                     )}
                   />
                 </View>
+
                 <View>
                   <Text style={[styles.subLabel, { textAlign: "right" }]}>
                     Selesai Dalam
@@ -214,6 +258,8 @@ export default function DetailAuction({
                 {item?.description}
               </Text>
 
+              <View style={styles.separator} />
+
               <Text style={styles.sectionLabel}>Pelelang</Text>
               <AuctionerCard
                 name={item?.auctioner?.displayName || "-"}
@@ -222,6 +268,7 @@ export default function DetailAuction({
               />
             </View>
           </ScrollView>
+
           <BiddingModal
             auctionId={params.id}
             stepBid={item?.stepBid}
@@ -240,6 +287,15 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: size.l,
     paddingHorizontal: size.xl,
+  },
+  carouselIndicator: {
+    position: "absolute",
+    right: size.l,
+    bottom: size.m,
+    paddingHorizontal: size.m,
+    paddingVertical: size.s,
+    borderRadius: size.s,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
   },
   title: {
     ...typography.heading2,

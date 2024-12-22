@@ -12,12 +12,12 @@ import {
 import { NumericFormat } from "react-number-format";
 import { colors, size, typography } from "src/data/globals";
 import { StackParamList } from "src/navigations/MainNavigator";
-import { ProductType } from "src/screens/Home";
+import { ProductType } from "src/types/productItem";
 
 const { width } = Dimensions.get("window");
 const ITEM_WIDTH = (width - 2 * size.xl - size.l) / 2;
 
-type ItemCardProps = {
+interface ItemCardProps {
   item: ProductType;
 };
 
@@ -51,7 +51,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
             justifyContent: "space-between",
           }}
         >
-          <Text style={styles.infoText}>{item.bidder.length} Bidder</Text>
+          <Text style={styles.infoText}>{item.bidder} Bidder</Text>
           <Text style={styles.infoText}>
             {moment(item.auctionEnd).fromNow()}
           </Text>

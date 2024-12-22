@@ -1,9 +1,9 @@
 import React from "react";
 import { TextInputProps, ViewStyle } from "react-native";
-import TextInputs from "../TextInputs";
 import { Control, Controller } from "react-hook-form";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+import TextInputs from "../TextInputs";
 interface AppTextInputsProps extends TextInputProps {
   name: string;
   label: string;

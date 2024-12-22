@@ -20,6 +20,7 @@ import {
   orderBy,
   query,
   startAt,
+  Timestamp,
   where,
 } from "firebase/firestore";
 import { database } from "src/services/firebase";
@@ -28,23 +29,8 @@ import serializeTime from "src/utils/serializeTime";
 import { useSelector } from "react-redux";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "src/navigations/MainNavigator";
-
-export interface ProductType {
-  auctionEnd: string | null;
-  bidder: any[];
-  condition: string;
-  createdAt: string | null;
-  createdBy: string;
-  currentBid: number;
-  description: string;
-  id: string;
-  images: string[];
-  startingBid: number;
-  status: string;
-  stepBid: number;
-  title: string;
-  winner: string;
-}
+import { Bid } from "src/types/bid";
+import { ProductType } from "src/types/productItem";
 
 type Props = NativeStackScreenProps<StackParamList, "HomeNav">;
 
@@ -70,7 +56,9 @@ export default function Home({ navigation }: Props) {
       );
       const querySnapshot = await getDocs(q);
 
-      let productItems: ProductType[] = [];
+      let fetchedItems: (Omit<ProductType, "bidder"> & { bidder: string[] })[] =
+        [];
+
       querySnapshot.forEach((doc) => {
         let data = {
           id: doc.id,
@@ -89,8 +77,26 @@ export default function Home({ navigation }: Props) {
           winner: doc.data().winner || "-",
         };
 
-        productItems.push(data);
+        fetchedItems.push(data);
       });
+
+      let productItems: ProductType[] = [];
+      for (const item of fetchedItems) {
+        let bidData = [];
+        for (const bid of item.bidder) {
+          const fetchedBid = await fetchBid(bid);
+          bidData.push(fetchedBid);
+        }
+
+        let totalBidder = bidData.reduce<Bid[]>((prev, curr) => {
+          if (!prev.some((bidder) => bidder.userId === curr!.userId)) {
+            prev.push(curr!);
+          }
+          return prev;
+        }, []);
+
+        productItems.push({ ...item, bidder: totalBidder.length });
+      }
 
       setItems(productItems);
     } catch (error: any) {
@@ -99,6 +105,27 @@ export default function Home({ navigation }: Props) {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function fetchBid(bidId: string) {
+    try {
+      const q = query(
+        collection(database, "bidder"),
+        where("__name__", "==", bidId)
+      );
+
+      const snapshot = await getDocs(q);
+      const results = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      return results[0] as Bid;
+    } catch (error: any) {
+      console.log(error.message);
+    }
+
+    return null;
   }
 
   useEffect(() => {

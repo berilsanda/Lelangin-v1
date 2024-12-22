@@ -7,14 +7,14 @@ import {
   View,
   StyleSheet,
 } from "react-native";
-import ImageZooms from "./ImageZooms";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
 import { colors, size } from "src/data/globals";
+import ImageZooms from "./ImageZooms";
 
 interface ImageLightboxProps {
   source: string;
   style?: ImageStyle;
-
 }
 
 const ImageLightbox: React.FC<ImageLightboxProps> = ({
@@ -28,6 +28,7 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({
       <TouchableWithoutFeedback onPress={() => setShowModal(true)}>
         <Image style={style} source={{ uri: source }} {...imageProps} />
       </TouchableWithoutFeedback>
+
       <Modal
         visible={showModal}
         onDismiss={() => setShowModal(false)}
@@ -44,7 +45,7 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({
         <View
           style={[
             StyleSheet.absoluteFillObject,
-            { backgroundColor: "rgba(0,0,0,0.25)" },
+            { backgroundColor: "rgba(0,0,0,0.5)" },
           ]}
         />
         <ImageZooms source={source} />

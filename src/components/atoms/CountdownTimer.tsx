@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
+
 import { typography } from "src/data/globals";
 
 interface CountdownTimerProps {
@@ -24,10 +25,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ date }) => {
     seconds: 0,
   });
 
-  // Setup Timer and update the timer using useEffect
-  // Call useEffect everytime timeUnits is changed
-  useEffect(() => {
-    // Function to separate time difference between end date
+  // Helper function to separate time difference between end date
     // and now date then set it to timeUnits state
     const calculateTimeUnits = (timeDifference: number) => {
       const seconds = Math.floor(timeDifference / 1000);
@@ -39,6 +37,9 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ date }) => {
       });
     };
 
+  // Setup Timer and update the timer using useEffect
+  // Call useEffect everytime timeUnits is changed
+  useEffect(() => {
     // Function to update the countdown timer
     const updateCountdown = () => {
       const currentDate = new Date().getTime();
@@ -48,6 +49,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ date }) => {
       if (timeDifference <= 0) {
         // Countdown finished
         calculateTimeUnits(0);
+        clearInterval(interval);
       } else {
         calculateTimeUnits(timeDifference);
       }
@@ -57,12 +59,13 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ date }) => {
     const interval = setInterval(updateCountdown, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [endDate]);
 
   // Format one x digit time to 0x instead of x
   const formatTime = (time: number) => {
     return time.toString().padStart(2, "0");
   };
+
   return (
     <View style={styles.timerContainer}>
       <Text style={styles.timerItem}>{formatTime(timeUnits.days)}</Text>
