@@ -2,9 +2,6 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Dimensions,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   Text,
@@ -21,9 +18,7 @@ import {
 } from "firebase/firestore";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { CountdownTimer, ImageLightbox } from "components/atoms";
-import BiddingModal from "molecules/BiddingModal";
-import AuctionerCard from "molecules/Card/AuctionerCard";
+import { CountdownTimer, Divider, PriceCounter } from "components/atoms";
 import { colors, size, typography } from "src/data/globals";
 import { StackParamList } from "src/navigations/MainNavigator";
 import {
@@ -32,12 +27,9 @@ import {
 } from "src/reduxs/reducer/persistReducer";
 import { addFavourite, database, removeFavourite } from "src/services/firebase";
 import serializeTime from "src/utils/serializeTime";
-import FastImage from "react-native-fast-image";
-import PriceCounter from "src/components/atoms/PriceCounter";
+import { AuctionerCard, BiddingModal, ImageCarousel } from "src/components/molecules";
 
 type Props = NativeStackScreenProps<StackParamList, "DetailLelang">;
-
-const WINDOW_WIDTH = Dimensions.get("window").width;
 
 export default function DetailAuction({
   navigation,
@@ -144,13 +136,6 @@ export default function DetailAuction({
     });
   }, [navigation, isFavorite]);
 
-  //Handle carousel page
-  const [currentPage, setCurrentPage] = useState(1);
-  function onScrollCarousel(event: NativeSyntheticEvent<NativeScrollEvent>) {
-    let currPage = Math.round(event.nativeEvent.contentOffset.x / WINDOW_WIDTH);
-    setCurrentPage(currPage + 1);
-  }
-
   return (
     <View style={{ flex: 1 }}>
       {loading ? (
@@ -159,33 +144,7 @@ export default function DetailAuction({
         <>
           <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             {/** Image Carousel */}
-            <View>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                pagingEnabled
-                decelerationRate={"fast"}
-                onMomentumScrollEnd={(e) => onScrollCarousel(e)}
-              >
-                {item?.images?.map((image: string) => {
-                  return (
-                    <ImageLightbox
-                      key={image}
-                      style={{
-                        width: WINDOW_WIDTH,
-                        height: (3 / 4) * WINDOW_WIDTH,
-                      }}
-                      source={{ uri: image }}
-                      resizeMode={FastImage.resizeMode.cover}
-                    />
-                  );
-                })}
-              </ScrollView>
-
-              <View style={styles.carouselIndicator}>
-                <Text>{`${currentPage} / ${item?.images?.length || 0}`}</Text>
-              </View>
-            </View>
+            <ImageCarousel images={item?.images} />
 
             {/** Content */}
             <View style={styles.contentContainer}>
@@ -211,7 +170,7 @@ export default function DetailAuction({
                 </View>
               </View>
 
-              <View style={styles.separator} />
+              <Divider />
 
               <Text style={styles.sectionLabel}>Deskripsi</Text>
               <Text
@@ -223,7 +182,7 @@ export default function DetailAuction({
                 {item?.description}
               </Text>
 
-              <View style={styles.separator} />
+              <Divider />
 
               <Text style={styles.sectionLabel}>Pelelang</Text>
               <AuctionerCard
@@ -253,23 +212,9 @@ const styles = StyleSheet.create({
     paddingVertical: size.l,
     paddingHorizontal: size.xl,
   },
-  carouselIndicator: {
-    position: "absolute",
-    right: size.l,
-    bottom: size.m,
-    paddingHorizontal: size.m,
-    paddingVertical: size.s,
-    borderRadius: size.s,
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
-  },
   title: {
     ...typography.heading2,
     marginBottom: size.l,
-  },
-  separator: {
-    marginVertical: size.l,
-    borderTopWidth: 1,
-    borderColor: colors.grey.light,
   },
   bidContainer: {
     flexDirection: "row",

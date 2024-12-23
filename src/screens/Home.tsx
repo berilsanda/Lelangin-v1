@@ -7,12 +7,10 @@ import {
   Alert,
   ActivityIndicator,
   RefreshControl,
+  Dimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
-import { TextInputs } from "src/components/atoms";
-import { size, typography } from "src/data/globals";
-import ItemCard from "src/components/molecules/Card/ItemCard";
 import {
   collection,
   endAt,
@@ -20,15 +18,17 @@ import {
   orderBy,
   query,
   startAt,
-  Timestamp,
   where,
 } from "firebase/firestore";
-import { database } from "src/services/firebase";
-import EmptyState from "src/components/molecules/EmptyState";
-import serializeTime from "src/utils/serializeTime";
 import { useSelector } from "react-redux";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
+import { Skeleton, TextInputs } from "src/components/atoms";
+import { EmptyState, ItemCard } from "src/components/molecules";
+import { size, typography } from "src/data/globals";
 import { StackParamList } from "src/navigations/MainNavigator";
+import { database } from "src/services/firebase";
+import serializeTime from "src/utils/serializeTime";
 import { Bid } from "src/types/bid";
 import { ProductType } from "src/types/productItem";
 
@@ -170,7 +170,27 @@ export default function Home({ navigation }: Props) {
         <Text style={typography.label3}>Lelang Terbaru</Text>
         <View style={{ marginTop: size.l, flexShrink: 2 }}>
           {loading || refreshing ? (
-            <ActivityIndicator />
+            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+              {Array.from(Array(10).keys()).map((_, i) => {
+                const skeletonWidth =
+                  (Dimensions.get("window").width - 2 * size.xl - size.l) / 2;
+
+                const hasMarginRight = i % 2 == 0
+
+                return (
+                  <Skeleton
+                    key={i}
+                    style={{
+                      width: skeletonWidth,
+                      height: 250,
+                      borderRadius: size.s,
+                      marginRight: hasMarginRight ? size.l : 0,
+                      marginBottom: size.l,
+                    }}
+                  />
+                );
+              })}
+            </View>
           ) : (
             <FlatList
               keyExtractor={(item) => item.id}

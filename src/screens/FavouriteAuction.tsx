@@ -5,16 +5,15 @@ import {
   Alert,
   FlatList,
   RefreshControl,
-  Text,
   View,
 } from "react-native";
-import { ProductType } from "./Home";
-import { database } from "src/services/firebase";
-import serializeTime from "src/utils/serializeTime";
-import EmptyState from "src/components/molecules/EmptyState";
-import ItemCard from "src/components/molecules/Card/ItemCard";
 import { useSelector } from "react-redux";
+
+import { EmptyState, ItemCard } from "src/components/molecules";
 import { size } from "src/data/globals";
+import { database } from "src/services/firebase";
+import { ProductType } from "src/types/productItem";
+import serializeTime from "src/utils/serializeTime";
 
 export default function FavouriteAuction() {
   const [loading, setLoading] = useState(false);

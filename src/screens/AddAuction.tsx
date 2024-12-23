@@ -10,9 +10,10 @@ import {
   AppTextInputs,
   AppTextInputMasks,
   Buttons,
+  Divider,
+  AppDateTimePicker,
 } from "src/components/atoms";
-import AppDateTimePicker from "src/components/atoms/App/AppDateTimePicker";
-import PictureListUploader from "src/components/molecules/PictureListUploader/PictureListUploader";
+import { PictureListUploader, RadioGroups } from "src/components/molecules";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { addProducts } from "src/services/firebase";
@@ -22,7 +23,6 @@ import { StackParamList } from "src/navigations/MainNavigator";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import combineDateTime from "src/utils/combineDateTime";
 import { toggleHomeUpdate } from "src/reduxs/reducer/tempReducer";
-import RadioGroups from "src/components/molecules/RadioGroups";
 
 type FormData = {
   pictureList: string[];
@@ -43,7 +43,7 @@ const schema = yup.object().shape({
     .required("Harap pilih foto."),
   title: yup.string().required("Silahkan isi nama barang."),
   description: yup.string().required("Silahkan masukkan deskripsi barang."),
-  conditions: yup.string().required('Silahkan pilih kondisi barang.'),
+  conditions: yup.string().required("Silahkan pilih kondisi barang."),
   startingBid: yup
     .number()
     .required("Silahkan masukkan harga awal.")
@@ -182,7 +182,7 @@ export default function AddAuction({ navigation }: Props) {
         <Controller
           name="conditions"
           control={control}
-          defaultValue={'new'}
+          defaultValue={"new"}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
               <RadioGroups
@@ -202,7 +202,7 @@ export default function AddAuction({ navigation }: Props) {
           )}
         />
 
-        <View style={styles.separator} />
+        <Divider />
 
         <AppTextInputMasks
           name="startingBid"
@@ -236,7 +236,7 @@ export default function AddAuction({ navigation }: Props) {
           }}
         />
 
-        <View style={styles.separator} />
+        <Divider />
 
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <AppDateTimePicker

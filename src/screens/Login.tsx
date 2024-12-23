@@ -18,13 +18,6 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "src/navigations/MainNavigator";
 
 type LoginData = { email: string; password: string };
-export type UserData = {
-  email?: string | null;
-  emailVerified?: boolean;
-  displayName?: string | null;
-  photoURL?: string | null;
-  uid: string;
-};
 
 const WINDOW_WIDTH = Dimensions.get("window").width;
 const WINDOW_HEIGHT = Dimensions.get("window").height;
