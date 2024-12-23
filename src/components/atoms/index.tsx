@@ -7,6 +7,7 @@ import CountdownTimer from "./CountdownTimer";
 import ImageLightbox from "./ImageLightbox";
 import ImageZooms from "./ImageZooms";
 import RadioButtons from "./RadioButtons";
+import Skeleton from "./Skeleton";
 import Stepper from "./Stepper";
 import TextInputMasks from "./TextInputMasks";
 import TextInputs from "./TextInputs";
@@ -21,6 +22,7 @@ export {
   ImageLightbox,
   ImageZooms,
   RadioButtons,
+  Skeleton,
   Stepper,
   TextInputMasks,
   TextInputs,

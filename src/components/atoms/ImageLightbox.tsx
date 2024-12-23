@@ -1,20 +1,19 @@
 import { useState } from "react";
 import {
-  Image,
   TouchableWithoutFeedback,
-  ImageStyle,
   Modal,
   View,
   StyleSheet,
+  StyleProp,
 } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import FastImage, { FastImageProps, ImageStyle } from "react-native-fast-image";
 
 import { colors, size } from "src/data/globals";
 import ImageZooms from "./ImageZooms";
 
-interface ImageLightboxProps {
-  source: string;
-  style?: ImageStyle;
+interface ImageLightboxProps extends FastImageProps {
+  style?: StyleProp<ImageStyle>;
 }
 
 const ImageLightbox: React.FC<ImageLightboxProps> = ({
@@ -23,10 +22,21 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({
   ...imageProps
 }) => {
   const [showModal, setShowModal] = useState(false);
+
+  function getUri() {
+    if (typeof source === "object" && source !== null && "uri" in source) {
+      return source.uri;
+    }
+
+    return undefined;
+  }
+
+  const uri = getUri();
+
   return (
     <>
       <TouchableWithoutFeedback onPress={() => setShowModal(true)}>
-        <Image style={style} source={{ uri: source }} {...imageProps} />
+        <FastImage style={style} source={source} {...imageProps} />
       </TouchableWithoutFeedback>
 
       <Modal
@@ -48,7 +58,7 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({
             { backgroundColor: "rgba(0,0,0,0.5)" },
           ]}
         />
-        <ImageZooms source={source} />
+        <ImageZooms uri={uri} />
       </Modal>
     </>
   );

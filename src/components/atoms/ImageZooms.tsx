@@ -1,13 +1,11 @@
-
-import { ImageZoom } from "@likashefqet/react-native-image-zoom";
+import {
+  ImageZoom,
+  ImageZoomProps,
+} from "@likashefqet/react-native-image-zoom";
 import { gestureHandlerRootHOC } from "react-native-gesture-handler";
 
-interface ImageZoomsProps {
-  source: string;
-}
-
-const ImageZooms: React.FC<ImageZoomsProps> = ({ source }) => {
-  return <ImageZoom uri={source} isDoubleTapEnabled doubleTapScale={2} />;
+const ImageZooms: React.FC<ImageZoomProps> = ({ uri }) => {
+  return <ImageZoom uri={uri} isDoubleTapEnabled doubleTapScale={2} />;
 };
 
 export default gestureHandlerRootHOC(ImageZooms);

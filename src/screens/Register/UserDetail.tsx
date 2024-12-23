@@ -8,7 +8,6 @@ import {
   StatusBar as Bar,
   View,
   TouchableOpacity,
-  Image,
 } from "react-native";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -16,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import FastImage from "react-native-fast-image";
 
 import { AppTextInputs, Buttons } from "components/atoms";
 import { colors, size, typography } from "data/globals";
@@ -116,7 +116,7 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
             style={{ alignSelf: "center", marginBottom: size.l }}
           >
             {!!userImage ? (
-              <Image
+              <FastImage
                 source={{ uri: userImage }}
                 style={styles.image}
                 resizeMode="cover"

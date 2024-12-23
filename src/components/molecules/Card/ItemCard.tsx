@@ -3,12 +3,12 @@ import moment from "moment";
 import React from "react";
 import {
   Dimensions,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import FastImage from "react-native-fast-image";
 import { NumericFormat } from "react-number-format";
 import { colors, size, typography } from "src/data/globals";
 import { StackParamList } from "src/navigations/MainNavigator";
@@ -29,7 +29,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
       style={styles.cardContainer}
       onPress={() => navigation.navigate("DetailLelang", {id: item.id})}
     >
-      <Image
+      <FastImage
         source={{ uri: item.images[0] }}
         style={styles.image}
         resizeMode="cover"

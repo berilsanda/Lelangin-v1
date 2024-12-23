@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ViewStyle,
   ActivityIndicator,
-  Image,
 } from "react-native";
 import React, { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -15,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { signOut } from "firebase/auth";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import FastImage from "react-native-fast-image";
 
 import { TextInputs, AppModals, Buttons } from "components/atoms";
 import { colors, size, typography } from "data/globals";
@@ -126,7 +126,7 @@ export default function Account({ navigation }: Props) {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         {!!userData?.photoURL ? (
-          <Image
+          <FastImage
             source={{ uri: userData?.photoURL }}
             style={styles.image}
             resizeMode="cover"
@@ -202,7 +202,7 @@ export default function Account({ navigation }: Props) {
                 style={{ alignSelf: "center", marginBottom: size.l }}
               >
                 {!!userImage ? (
-                  <Image
+                  <FastImage
                     source={{ uri: userImage }}
                     style={styles.image}
                     resizeMode="cover"

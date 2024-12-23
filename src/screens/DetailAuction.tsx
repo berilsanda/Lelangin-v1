@@ -11,7 +11,6 @@ import {
   View,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NumericFormat } from "react-number-format";
 import { useDispatch, useSelector } from "react-redux";
 import {
   collection,
@@ -33,12 +32,8 @@ import {
 } from "src/reduxs/reducer/persistReducer";
 import { addFavourite, database, removeFavourite } from "src/services/firebase";
 import serializeTime from "src/utils/serializeTime";
-import Animated, {
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import FastImage from "react-native-fast-image";
+import PriceCounter from "src/components/atoms/PriceCounter";
 
 type Props = NativeStackScreenProps<StackParamList, "DetailLelang">;
 
@@ -108,7 +103,6 @@ export default function DetailAuction({
         }
       }
     );
-
     return unsubscribe;
   }
 
@@ -157,28 +151,6 @@ export default function DetailAuction({
     setCurrentPage(currPage + 1);
   }
 
-  const [currBid, setCurrBid] = useState(
-    item?.currentBid == 0 ? item?.startingBid : item?.currentBid
-  );
-
-  const translateY = useSharedValue(0);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
-  }));
-
-  useEffect(() => {
-    translateY.value = withTiming(-50, { duration: 250 }, () => {
-      if (item?.currentBid != 0) {
-        runOnJS(setCurrBid)(item?.currentBid);
-      } else {
-        runOnJS(setCurrBid)(item?.startingBid);
-      }
-      translateY.value = 50;
-      translateY.value = withTiming(0, { duration: 250 });
-    });
-  }, [item?.currentBid]);
-
   return (
     <View style={{ flex: 1 }}>
       {loading ? (
@@ -202,9 +174,9 @@ export default function DetailAuction({
                       style={{
                         width: WINDOW_WIDTH,
                         height: (3 / 4) * WINDOW_WIDTH,
-                        resizeMode: "cover",
                       }}
-                      source={image}
+                      source={{ uri: image }}
+                      resizeMode={FastImage.resizeMode.cover}
                     />
                   );
                 })}
@@ -222,19 +194,12 @@ export default function DetailAuction({
               <View style={styles.bidContainer}>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.subLabel}>Bid Tertinggi</Text>
-                  <NumericFormat
-                    value={currBid}
-                    displayType={"text"}
-                    prefix={"Rp "}
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    renderText={(val) => (
-                      <View style={{ overflow: "hidden" }}>
-                        <Animated.Text style={[styles.bidValue, animatedStyle]}>
-                          {val}
-                        </Animated.Text>
-                      </View>
-                    )}
+                  <PriceCounter
+                    bidValue={
+                      item?.currentBid == 0
+                        ? item?.startingBid
+                        : item?.currentBid
+                    }
                   />
                 </View>
 
@@ -300,10 +265,6 @@ const styles = StyleSheet.create({
   title: {
     ...typography.heading2,
     marginBottom: size.l,
-  },
-  bidValue: {
-    ...typography.heading2,
-    color: colors.warning,
   },
   separator: {
     marginVertical: size.l,
