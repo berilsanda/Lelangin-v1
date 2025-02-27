@@ -14,7 +14,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 
 import { AppTextInputs, Buttons } from '@/components/atoms';
@@ -24,6 +23,7 @@ import { createUser, UserRegister } from '@/services/firebase';
 import uploadImageAsync from '@/services/uploadImageAsync';
 import { setUser } from '@/stores/reducer/persistReducer';
 import pickImage from '@/utils/imagePicker';
+import { useAppDispatch } from '@/hooks/useRedux';
 
 const schema = yup.object().shape({
   phoneNumber: yup.string().required('Silahkan masukkan nomor telepon anda'),
@@ -35,7 +35,7 @@ const schema = yup.object().shape({
 type Props = NativeStackScreenProps<StackParamList, 'UserDetail'>;
 
 export default function UserDetail({ navigation, route: { params } }: Props) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const [userImage, setUserImage] = useState<string | null>(null);
 
