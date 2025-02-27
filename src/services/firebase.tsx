@@ -27,7 +27,42 @@ import {
 } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { Alert } from 'react-native';
+import { Source } from 'react-native-fast-image';
 import uuid from 'react-native-uuid';
+
+export type CreateUser = {
+  address: {
+    city: string;
+    streetAddress: string;
+    zipCode: string;
+  };
+  createdAt: Date;
+  displayName: string;
+  email: string;
+  favorites: string[];
+  lastLogin: Date;
+  phoneNumber: number;
+  photoURL: string;
+  uid: string;
+  updateAt: Date;
+};
+
+export type AddProduct = {
+  id: string;
+  auctionEnd: Date;
+  bidder: string[]; // or string[] if you know the type of bidder
+  condition: string;
+  createdAt: Date;
+  createdBy: string;
+  currentBid: number;
+  description: string;
+  images: Source[];
+  startingBid: number;
+  status: 'active' | 'inactive' | 'ended'; // assuming status can be one of these values
+  stepBid: number;
+  title: string;
+  winner: null | string; // assuming winner can be either null or a string
+};
 
 const firebaseConfig = {
   apiKey: API_KEY,
@@ -76,7 +111,7 @@ export const users = collection(database, 'user');
 export const products = collection(database, 'products');
 export const bidder = collection(database, 'bidder');
 
-export async function createUser(body: any) {
+export async function createUser(body: CreateUser) {
   try {
     await setDoc(doc(database, 'user', body.uid), body);
   } catch (error: any) {
@@ -122,7 +157,7 @@ export async function updateUser({
   }
 }
 
-export async function addProducts(body: any) {
+export async function addProducts(body: AddProduct) {
   try {
     await setDoc(doc(database, 'products', body.id), body);
   } catch (error: any) {

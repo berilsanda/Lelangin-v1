@@ -19,7 +19,7 @@ import * as yup from 'yup';
 import { AppTextInputs, Buttons } from '@/components/atoms';
 import { Colors, Spacing, Typography } from '@/config/constant';
 import { StackParamList } from '@/navigations/MainNavigator';
-import { createUser, UserRegister } from '@/services/firebase';
+import { CreateUser, createUser, UserRegister } from '@/services/firebase';
 import uploadImageAsync from '@/services/uploadImageAsync';
 import { setUser } from '@/stores/reducer/persistReducer';
 import pickImage from '@/utils/imagePicker';
@@ -61,7 +61,7 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
         const pathToUpload = `User/${registerUser.uid}/Profil`;
         const photo = await uploadImageAsync(userImage!, pathToUpload, `photo`);
 
-        const sendData = {
+        const sendData: CreateUser = {
           address: {
             city: data.city,
             streetAddress: data.streetAddress,

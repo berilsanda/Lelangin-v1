@@ -16,7 +16,7 @@ import {
 } from 'src/components/atoms';
 import { PictureListUploader, RadioGroups } from 'src/components/molecules';
 import { StackParamList } from 'src/navigations/MainNavigator';
-import { addProducts } from 'src/services/firebase';
+import { AddProduct, addProducts } from 'src/services/firebase';
 import uploadImageAsync from 'src/services/uploadImageAsync';
 import combineDateTime from 'src/utils/combineDateTime';
 import * as yup from 'yup';
@@ -100,7 +100,7 @@ export default function AddAuction({ navigation }: Props) {
   async function onSubmit(data: FormData) {
     setLoading(true);
     try {
-      const productId = uuid.v4();
+      const productId = uuid.v4().toString();
 
       // upload image
       const pathToUpload = `Product/${productId}/Images`;
@@ -119,7 +119,7 @@ export default function AddAuction({ navigation }: Props) {
         }),
       );
 
-      const sendData = {
+      const sendData: AddProduct = {
         id: productId,
         auctionEnd: combineDateTime(data.dateAuctionEnd, data.timeAuctionEnd),
         bidder: [],

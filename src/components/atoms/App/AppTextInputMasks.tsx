@@ -1,6 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React from 'react';
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller, FieldValues, Path, PathValue } from 'react-hook-form';
 import { TextInputProps, ViewStyle } from 'react-native';
 import {
   TextInputMaskOptionProp,
@@ -9,12 +9,12 @@ import {
 
 import TextInputMasks from '../TextInputMasks';
 
-interface AppTextInputMasksProps extends TextInputProps {
+interface AppTextInputMasksProps<T extends FieldValues> extends TextInputProps {
   name: string;
   label: string;
   placeholder: string;
   value?: string;
-  control: Control<any>;
+  control: Control<T>;
   onChangeText?: (text: string) => void;
   style?: ViewStyle;
   inputStyle?: ViewStyle;
@@ -26,7 +26,7 @@ interface AppTextInputMasksProps extends TextInputProps {
   options?: TextInputMaskOptionProp | undefined;
 }
 
-const AppTextInputMasks: React.FC<AppTextInputMasksProps> = ({
+const AppTextInputMasks = <T extends FieldValues> ({
   name,
   label,
   placeholder,
@@ -42,11 +42,11 @@ const AppTextInputMasks: React.FC<AppTextInputMasksProps> = ({
   type,
   options,
   ...textInputProps
-}) => {
+}: AppTextInputMasksProps<T>) => {
   return (
     <Controller
-      name={name}
-      defaultValue={defaultValue}
+      name={name as Path<T>}
+      defaultValue={defaultValue as PathValue<T,Path<T>>}
       control={control}
       render={({
         field: { onChange, onBlur, value },

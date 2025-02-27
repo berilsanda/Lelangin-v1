@@ -5,21 +5,21 @@ import RadioButtons from '../atoms/RadioButtons';
 
 import { Spacing } from '@/config/constant';
 
-interface RadioGroupsProps {
+interface RadioGroupsProps<T> {
   label?: string;
-  data: { label: string; value: any }[];
-  value: any;
-  setValue: Dispatch<SetStateAction<any>>;
+  data: { label: string; value: T }[];
+  value: T;
+  setValue: Dispatch<SetStateAction<T>>;
   style?: ViewStyle;
 }
 
-const RadioGroups: React.FC<RadioGroupsProps> = ({
+const RadioGroups = <T,>({
   label,
   data,
   value,
   setValue,
   style,
-}) => {
+}: RadioGroupsProps<T>) => {
   return (
     <View>
       {label ? <Text style={{ marginBottom: Spacing.m }}>{label}</Text> : null}

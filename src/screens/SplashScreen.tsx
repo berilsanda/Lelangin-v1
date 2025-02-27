@@ -11,11 +11,17 @@ import serializeTime from 'src/utils/serializeTime';
 import { Colors, Typography } from '@/config/constant';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { setUser } from '@/stores/reducer/persistReducer';
+import { DocumentData } from 'firebase/firestore';
 
 const { width, height } = Dimensions.get('screen');
 
 type Props = NativeStackScreenProps<StackParamList, 'SplashScreen'>;
 
+type CurrentUser = DocumentData & {
+  uid: string;
+  email: string | null;
+  emailVerified: boolean;
+}
 export default function SplashScreen({ navigation }: Props) {
   const dispatch = useAppDispatch();
   const userData = useAppSelector((state) => state.persist.userData);
@@ -25,7 +31,7 @@ export default function SplashScreen({ navigation }: Props) {
       if (user) {
         const userFirestoreData = await getUser(user.uid);
 
-        const currentUser: any = {
+        const currentUser: CurrentUser = {
           ...userFirestoreData,
           uid: user.uid,
           email: user.email,

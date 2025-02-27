@@ -37,7 +37,7 @@ const SKELETON_WIDTH =
   (Dimensions.get('window').width - 2 * Spacing.xl - Spacing.l) / 2;
 export default function Home({ navigation }: Props) {
   const shouldHomeUpdate = useAppSelector(
-    (state: any) => state.temp.homeUpdateState,
+    (state) => state.temp.homeUpdateState,
   );
   const [loading, setLoading] = useState(false);
   const [toggle, setToggle] = useState(false);
