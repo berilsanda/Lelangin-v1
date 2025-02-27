@@ -14,6 +14,7 @@ import MainNavigator from './src/navigations/MainNavigator';
 
 import { Colors } from '@/config/constant';
 import store from '@/stores/store';
+import { navigationRef } from '@/utils/rootNavigation';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -44,7 +45,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <NavigationContainer theme={navTheme}>
+      <NavigationContainer ref={navigationRef} theme={navTheme}>
         <StatusBar style="auto" />
         <MainNavigator />
       </NavigationContainer>
