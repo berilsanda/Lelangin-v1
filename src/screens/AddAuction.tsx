@@ -7,7 +7,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Source } from 'react-native-fast-image';
 import uuid from 'react-native-uuid';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   AppTextInputs,
   AppTextInputMasks,
@@ -24,6 +23,7 @@ import * as yup from 'yup';
 
 import { Colors, Spacing, Typography } from '@/config/constant';
 import { toggleHomeUpdate } from '@/stores/reducer/tempReducer';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 
 type FormData = {
   pictureList: Source[];
@@ -89,13 +89,13 @@ export default function AddAuction({ navigation }: Props) {
   // Todo :
   // - add loading spinner animations
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { control, handleSubmit, reset } = useForm<FormData>({
     resolver: yupResolver(schema),
   });
 
   const [loading, setLoading] = useState(false);
-  const userData = useSelector((state: any) => state.persist.userData);
+  const userData = useAppSelector((state) => state.persist.userData);
 
   async function onSubmit(data: FormData) {
     setLoading(true);

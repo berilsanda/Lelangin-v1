@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import {
   Modal,
   ModalBaseProps,
@@ -8,10 +8,9 @@ import {
   ViewStyle,
 } from 'react-native';
 
-interface AppModalsProps extends ModalBaseProps {
+interface AppModalsProps extends ModalBaseProps, PropsWithChildren {
   visible: boolean;
   onDismiss: () => void;
-  children: any;
   style?: ViewStyle;
   position?: 'center' | 'bottom';
 }

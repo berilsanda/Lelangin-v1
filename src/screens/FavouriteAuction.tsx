@@ -7,18 +7,18 @@ import {
   RefreshControl,
   View,
 } from 'react-native';
-import { useSelector } from 'react-redux';
 
 import { EmptyState, ItemCard } from '@/components/molecules';
 import { Spacing } from '@/config/constant';
 import { database } from '@/services/firebase';
 import { ProductType } from '@/types/productModel';
 import serializeTime from '@/utils/serializeTime';
+import { useAppSelector } from '@/hooks/useRedux';
 
 export default function FavouriteAuction() {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<ProductType[]>([]);
-  const userData = useSelector((state: any) => state.persist.userData);
+  const userData = useAppSelector((state) => state.persist.userData);
 
   async function fetchAuction() {
     setLoading(true);

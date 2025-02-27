@@ -16,7 +16,6 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { CountdownTimer, Divider, PriceCounter } from '@/components/atoms';
 import {
@@ -32,6 +31,7 @@ import {
   removeRdxFavourite,
 } from '@/stores/reducer/persistReducer';
 import serializeTime from '@/utils/serializeTime';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 
 type Props = NativeStackScreenProps<StackParamList, 'DetailLelang'>;
 
@@ -42,8 +42,8 @@ export default function DetailAuction({
   const [item, setItem] = useState<DocumentData>();
   const [loading, setLoading] = useState(true);
 
-  const dispatch = useDispatch();
-  const userData = useSelector((state: any) => state.persist.userData);
+  const dispatch = useAppDispatch();
+  const userData = useAppSelector((state) => state.persist.userData);
   const isFavorite: boolean = userData.favorites.includes(params.id);
 
   async function fetchData() {

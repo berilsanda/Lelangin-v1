@@ -14,7 +14,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { AppModals, Buttons, TextInputs } from '@/components/atoms';
 import { Colors, Spacing, Typography } from '@/config/constant';
@@ -23,16 +22,17 @@ import { auth, updateUser } from '@/services/firebase';
 import uploadImageAsync from '@/services/uploadImageAsync';
 import { resetUser, setUser } from '@/stores/reducer/persistReducer';
 import pickImage from '@/utils/imagePicker';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 
 type Props = NativeStackScreenProps<AccountStackParamList, 'Account'>;
 
 export default function Account({ navigation }: Props) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const [loadingModal, setLoadingModal] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const userData = useSelector((state: any) => state.persist.userData);
+  const userData = useAppSelector((state) => state.persist.userData);
   const [userName, setUserName] = useState<string | null>(userData.displayName);
   const [userImage, setUserImage] = useState<string | null>(userData.photoURL);
 

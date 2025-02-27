@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { NumericFormat } from 'react-number-format';
-import { useSelector } from 'react-redux';
 import { addBid } from 'src/services/firebase';
 
 import { Buttons } from '../atoms';
 import Stepper from '../atoms/Stepper';
 
 import { Colors, Spacing, Typography } from '@/config/constant';
+import { useAppSelector } from '@/hooks/useRedux';
 
 interface BiddingModalProps {
   auctionId: string;
@@ -24,7 +24,7 @@ const BiddingModal: React.FC<BiddingModalProps> = ({
   stepBid,
   disabled,
 }) => {
-  const userData = useSelector((state: any) => state.persist.userData);
+  const userData = useAppSelector((state) => state.persist.userData);
   const [currentValue, setCurrentValue] = useState(0);
   const cantSubstract =
     currentValue - stepBid <= (currentBid > 0 ? currentBid : startingBid);
