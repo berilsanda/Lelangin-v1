@@ -1,15 +1,15 @@
-import { View } from "moti";
-import { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
+import { View } from 'moti';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-} from "react-native-reanimated";
-import { NumericFormat } from "react-number-format";
+} from 'react-native-reanimated';
+import { NumericFormat } from 'react-number-format';
 
-import { colors, typography } from "src/data/globals";
+import { Colors, Typography } from '@/config/constant';
 
 interface PriceCounterProps {
   bidValue: number;
@@ -34,12 +34,12 @@ const PriceCounter: React.FC<PriceCounterProps> = ({ bidValue }) => {
   return (
     <NumericFormat
       value={currBid}
-      displayType={"text"}
-      prefix={"Rp "}
+      displayType={'text'}
+      prefix={'Rp '}
       thousandSeparator="."
       decimalSeparator=","
       renderText={(val) => (
-        <View style={{ overflow: "hidden" }}>
+        <View style={{ overflow: 'hidden' }}>
           <Animated.Text style={[styles.bidValue, animatedStyle]}>
             {val}
           </Animated.Text>
@@ -51,8 +51,8 @@ const PriceCounter: React.FC<PriceCounterProps> = ({ bidValue }) => {
 
 const styles = StyleSheet.create({
   bidValue: {
-    ...typography.heading2,
-    color: colors.warning,
+    ...Typography.heading2,
+    color: Colors.warning,
   },
 });
 

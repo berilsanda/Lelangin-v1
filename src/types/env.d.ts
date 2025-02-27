@@ -1,4 +1,4 @@
-declare module "@env" {
+declare module '@env' {
   export const APP_VER: string;
 
   export const API_KEY: string;

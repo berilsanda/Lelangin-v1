@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 
-import { typography } from "src/data/globals";
+import { Typography } from '@/config/constant';
 
 interface CountdownTimerProps {
   date: string | null;
@@ -15,7 +15,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ date }) => {
   }
 
   // Initialize string props to a Date format
-  let endDate = new Date(date);
+  const endDate = new Date(date);
 
   // Initialize timeUnits to display timer
   const [timeUnits, setTimeUnits] = useState({
@@ -26,16 +26,16 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ date }) => {
   });
 
   // Helper function to separate time difference between end date
-    // and now date then set it to timeUnits state
-    const calculateTimeUnits = (timeDifference: number) => {
-      const seconds = Math.floor(timeDifference / 1000);
-      setTimeUnits({
-        days: Math.floor((seconds % (365 * 24 * 60 * 60)) / (24 * 60 * 60)),
-        hours: Math.floor((seconds % (24 * 60 * 60)) / (60 * 60)),
-        minutes: Math.floor((seconds % (60 * 60)) / 60),
-        seconds: seconds % 60,
-      });
-    };
+  // and now date then set it to timeUnits state
+  const calculateTimeUnits = (timeDifference: number) => {
+    const seconds = Math.floor(timeDifference / 1000);
+    setTimeUnits({
+      days: Math.floor((seconds % (365 * 24 * 60 * 60)) / (24 * 60 * 60)),
+      hours: Math.floor((seconds % (24 * 60 * 60)) / (60 * 60)),
+      minutes: Math.floor((seconds % (60 * 60)) / 60),
+      seconds: seconds % 60,
+    });
+  };
 
   // Setup Timer and update the timer using useEffect
   // Call useEffect everytime timeUnits is changed
@@ -63,7 +63,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ date }) => {
 
   // Format one x digit time to 0x instead of x
   const formatTime = (time: number) => {
-    return time.toString().padStart(2, "0");
+    return time.toString().padStart(2, '0');
   };
 
   return (
@@ -81,11 +81,11 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ date }) => {
 
 const styles = StyleSheet.create({
   timerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   timerItem: {
-    ...typography.paragraph2,
+    ...Typography.paragraph2,
     paddingHorizontal: 2,
   },
 });

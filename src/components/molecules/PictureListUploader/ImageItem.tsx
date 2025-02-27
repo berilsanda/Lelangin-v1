@@ -1,17 +1,18 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Source } from 'react-native-fast-image';
+import { ImageLightbox } from 'src/components/atoms';
 
-import { ImageLightbox } from "src/components/atoms";
-import { colors, size, typography } from "src/data/globals";
+import { Colors, Spacing, Typography } from '@/config/constant';
 
 interface ImageItemProps {
-  picture: string;
+  picture: Source;
   index: number;
   deletePicture: (index: number) => void;
 }
 
 const ImageItem = ({ picture, index, deletePicture }: ImageItemProps) => {
   return (
-    <View style={{ marginLeft: size.l }}>
+    <View style={{ marginLeft: Spacing.l }}>
       <ImageLightbox source={picture} style={styles.image} />
       <TouchableOpacity
         style={styles.imgDeleteBtn}
@@ -20,9 +21,9 @@ const ImageItem = ({ picture, index, deletePicture }: ImageItemProps) => {
       >
         <Text
           style={{
-            ...typography.paragraph3,
-            color: colors.surface,
-            textAlign: "center",
+            ...Typography.paragraph3,
+            color: Colors.surface,
+            textAlign: 'center',
           }}
         >
           Hapus
@@ -36,18 +37,18 @@ const styles = StyleSheet.create({
   image: {
     height: 98.2,
     width: 98.2,
-    borderRadius: size.s,
+    borderRadius: Spacing.s,
   },
   imgDeleteBtn: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
     right: 0,
     left: 0,
-    backgroundColor: "rgba(0,0,0,0.2)",
-    borderBottomLeftRadius: size.s,
-    borderBottomRightRadius: size.s,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    borderBottomLeftRadius: Spacing.s,
+    borderBottomRightRadius: Spacing.s,
     paddingTop: 2,
-    paddingBottom: size.s,
+    paddingBottom: Spacing.s,
   },
 });
 

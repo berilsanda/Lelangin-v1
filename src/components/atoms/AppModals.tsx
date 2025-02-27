@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Modal,
   ModalBaseProps,
@@ -5,14 +6,14 @@ import {
   TouchableWithoutFeedback,
   View,
   ViewStyle,
-} from "react-native";
+} from 'react-native';
 
 interface AppModalsProps extends ModalBaseProps {
   visible: boolean;
   onDismiss: () => void;
   children: any;
   style?: ViewStyle;
-  position?: "center" | "bottom";
+  position?: 'center' | 'bottom';
 }
 
 const AppModals: React.FC<AppModalsProps> = ({
@@ -20,7 +21,7 @@ const AppModals: React.FC<AppModalsProps> = ({
   onDismiss,
   children,
   style: addOnStyle,
-  position = "center",
+  position = 'center',
   ...modalBaseProps
 }) => {
   return (
@@ -36,7 +37,7 @@ const AppModals: React.FC<AppModalsProps> = ({
           style={[
             StyleSheet.absoluteFillObject,
             styles.modalContainer,
-            { justifyContent: position == "center" ? "center" : "flex-end" },
+            { justifyContent: position == 'center' ? 'center' : 'flex-end' },
             addOnStyle,
           ]}
         >
@@ -50,8 +51,8 @@ const AppModals: React.FC<AppModalsProps> = ({
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
 });
 

@@ -1,9 +1,9 @@
-import React from "react";
-import { TextInputProps, ViewStyle } from "react-native";
-import { Control, Controller } from "react-hook-form";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import React from 'react';
+import { Control, Controller } from 'react-hook-form';
+import { TextInputProps, ViewStyle } from 'react-native';
 
-import TextInputs from "../TextInputs";
+import TextInputs from '../TextInputs';
 interface AppTextInputsProps extends TextInputProps {
   name: string;
   label: string;

@@ -1,6 +1,7 @@
-import { StyleProp, ViewProps, ViewStyle } from "react-native";
-import { FadeIn, FadeOut } from "react-native-reanimated";
-import { MotiView } from "moti";
+import { MotiView } from 'moti';
+import React from 'react';
+import { StyleProp, ViewProps, ViewStyle } from 'react-native';
+import { FadeIn, FadeOut } from 'react-native-reanimated';
 
 interface SkeletonProps extends ViewProps {
   style?: StyleProp<ViewStyle>;
@@ -11,8 +12,8 @@ const Skeleton: React.FC<SkeletonProps> = ({ style: AddOnStyle, ...props }) => {
     <MotiView
       style={AddOnStyle}
       {...props}
-      from={{ backgroundColor: "#ddd" }}
-      animate={{ backgroundColor: "#eee" }}
+      from={{ backgroundColor: '#ddd' }}
+      animate={{ backgroundColor: '#eee' }}
       transition={{
         duration: 1000,
         loop: true,

@@ -1,19 +1,19 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
   FlatList,
   RefreshControl,
   View,
-} from "react-native";
-import { useSelector } from "react-redux";
+} from 'react-native';
+import { useSelector } from 'react-redux';
 
-import { EmptyState, ItemCard } from "src/components/molecules";
-import { size } from "src/data/globals";
-import { database } from "src/services/firebase";
-import { ProductType } from "src/types/productItem";
-import serializeTime from "src/utils/serializeTime";
+import { EmptyState, ItemCard } from '@/components/molecules';
+import { Spacing } from '@/config/constant';
+import { database } from '@/services/firebase';
+import { ProductType } from '@/types/productModel';
+import serializeTime from '@/utils/serializeTime';
 
 export default function FavouriteAuction() {
   const [loading, setLoading] = useState(false);
@@ -28,29 +28,29 @@ export default function FavouriteAuction() {
       }
 
       const q = query(
-        collection(database, "products"),
-        where("id", "in", userData.favorites),
-        where("auctionEnd", ">=", new Date())
+        collection(database, 'products'),
+        where('id', 'in', userData.favorites),
+        where('auctionEnd', '>=', new Date()),
       );
       const querySnapshot = await getDocs(q);
 
-      let productItems: ProductType[] = [];
+      const productItems: ProductType[] = [];
       querySnapshot.forEach((doc) => {
-        let data = {
+        const data = {
           id: doc.id,
-          title: doc.data().title || "-",
-          description: doc.data().description || "-",
+          title: doc.data().title || '-',
+          description: doc.data().description || '-',
           startingBid: doc.data().startingBid || 0,
           currentBid: doc.data().currentBid || 0,
           images: doc.data().images || [],
           auctionEnd: serializeTime(doc.data().auctionEnd),
-          condition: doc.data().condition || "-",
+          condition: doc.data().condition || '-',
           createdAt: serializeTime(doc.data().createdAt),
-          createdBy: doc.data().createdBy || "-",
+          createdBy: doc.data().createdBy || '-',
           stepBid: doc.data().stepBid || 10000,
-          status: doc.data().status || "active",
+          status: doc.data().status || 'active',
           bidder: doc.data().bidder || [],
-          winner: doc.data().winner || "-",
+          winner: doc.data().winner || '-',
         };
 
         productItems.push(data);
@@ -59,7 +59,7 @@ export default function FavouriteAuction() {
       setItems(productItems);
     } catch (error: any) {
       console.log(error.message);
-      Alert.alert("Kesalahan", error.message);
+      Alert.alert('Kesalahan', error.message);
     } finally {
       setLoading(false);
     }
@@ -77,14 +77,14 @@ export default function FavouriteAuction() {
     try {
       await fetchAuction();
     } catch (error: any) {
-      Alert.alert("Kesalahan", error.message);
+      Alert.alert('Kesalahan', error.message);
     } finally {
       setRefreshing(false);
     }
   }
 
   return (
-    <View style={{ paddingHorizontal: size.xl, paddingVertical: size.l }}>
+    <View style={{ paddingHorizontal: Spacing.xl, paddingVertical: Spacing.l }}>
       {loading || refreshing ? (
         <ActivityIndicator />
       ) : (

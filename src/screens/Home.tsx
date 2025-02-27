@@ -1,16 +1,5 @@
-import {
-  StyleSheet,
-  StatusBar as Bar,
-  View,
-  Text,
-  FlatList,
-  Alert,
-  ActivityIndicator,
-  RefreshControl,
-  Dimensions,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import Feather from "@expo/vector-icons/Feather";
+import Feather from '@expo/vector-icons/Feather';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   collection,
   endAt,
@@ -19,76 +8,89 @@ import {
   query,
   startAt,
   where,
-} from "firebase/firestore";
-import { useSelector } from "react-redux";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+} from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
+import {
+  StyleSheet,
+  StatusBar as Bar,
+  View,
+  Text,
+  FlatList,
+  Alert,
+  RefreshControl,
+  Dimensions,
+} from 'react-native';
 
-import { Skeleton, TextInputs } from "src/components/atoms";
-import { EmptyState, ItemCard } from "src/components/molecules";
-import { size, typography } from "src/data/globals";
-import { StackParamList } from "src/navigations/MainNavigator";
-import { database } from "src/services/firebase";
-import serializeTime from "src/utils/serializeTime";
-import { Bid } from "src/types/bid";
-import { ProductType } from "src/types/productItem";
+import { Skeleton, TextInputs } from '@/components/atoms';
+import { EmptyState, ItemCard } from '@/components/molecules';
+import { Spacing, Typography } from '@/config/constant';
+import { useAppSelector } from '@/hooks/useRedux';
+import { StackParamList } from '@/navigations/MainNavigator';
+import { database } from '@/services/firebase';
+import { Bid } from '@/types/bidModel';
+import { ProductType } from '@/types/productModel';
+import serializeTime from '@/utils/serializeTime';
 
-type Props = NativeStackScreenProps<StackParamList, "HomeNav">;
+type Props = NativeStackScreenProps<StackParamList, 'HomeNav'>;
 
+const SKELETON_WIDTH =
+  (Dimensions.get('window').width - 2 * Spacing.xl - Spacing.l) / 2;
 export default function Home({ navigation }: Props) {
-  const shouldHomeUpdate = useSelector(
-    (state: any) => state.temp.homeUpdateState
+  const shouldHomeUpdate = useAppSelector(
+    (state: any) => state.temp.homeUpdateState,
   );
   const [loading, setLoading] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [items, setItems] = useState<ProductType[]>([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
   async function fetchAuction() {
     setLoading(true);
     try {
       const q = query(
-        collection(database, "products"),
-        where("status", "==", "active"),
-        where("auctionEnd", ">=", new Date()),
-        orderBy("title"),
+        collection(database, 'products'),
+        where('status', '==', 'active'),
+        where('auctionEnd', '>=', new Date()),
+        orderBy('title'),
         startAt(search),
-        endAt(search + "\uf8ff")
+        endAt(search + '\uf8ff'),
       );
       const querySnapshot = await getDocs(q);
 
-      let fetchedItems: (Omit<ProductType, "bidder"> & { bidder: string[] })[] =
-        [];
+      const fetchedItems: (Omit<ProductType, 'bidder'> & {
+        bidder: string[];
+      })[] = [];
 
       querySnapshot.forEach((doc) => {
-        let data = {
+        const data = {
           id: doc.id,
-          title: doc.data().title || "-",
-          description: doc.data().description || "-",
+          title: doc.data().title || '-',
+          description: doc.data().description || '-',
           startingBid: doc.data().startingBid || 0,
           currentBid: doc.data().currentBid || 0,
           images: doc.data().images || [],
           auctionEnd: serializeTime(doc.data().auctionEnd),
-          condition: doc.data().condition || "-",
+          condition: doc.data().condition || '-',
           createdAt: serializeTime(doc.data().createdAt),
-          createdBy: doc.data().createdBy || "-",
+          createdBy: doc.data().createdBy || '-',
           stepBid: doc.data().stepBid || 10000,
-          status: doc.data().status || "active",
+          status: doc.data().status || 'active',
           bidder: doc.data().bidder || [],
-          winner: doc.data().winner || "-",
+          winner: doc.data().winner || '-',
         };
 
         fetchedItems.push(data);
       });
 
-      let productItems: ProductType[] = [];
+      const productItems: ProductType[] = [];
       for (const item of fetchedItems) {
-        let bidData = [];
+        const bidData = [];
         for (const bid of item.bidder) {
           const fetchedBid = await fetchBid(bid);
           bidData.push(fetchedBid);
         }
 
-        let totalBidder = bidData.reduce<Bid[]>((prev, curr) => {
+        const totalBidder = bidData.reduce<Bid[]>((prev, curr) => {
           if (!prev.some((bidder) => bidder.userId === curr!.userId)) {
             prev.push(curr!);
           }
@@ -101,7 +103,7 @@ export default function Home({ navigation }: Props) {
       setItems(productItems);
     } catch (error: any) {
       console.log(error.message);
-      Alert.alert("Kesalahan", error.message);
+      Alert.alert('Kesalahan', error.message);
     } finally {
       setLoading(false);
     }
@@ -110,8 +112,8 @@ export default function Home({ navigation }: Props) {
   async function fetchBid(bidId: string) {
     try {
       const q = query(
-        collection(database, "bidder"),
-        where("__name__", "==", bidId)
+        collection(database, 'bidder'),
+        where('__name__', '==', bidId),
       );
 
       const snapshot = await getDocs(q);
@@ -140,7 +142,7 @@ export default function Home({ navigation }: Props) {
     try {
       await fetchAuction();
     } catch (error: any) {
-      Alert.alert("Kesalahan", error.message);
+      Alert.alert('Kesalahan', error.message);
     } finally {
       setRefreshing(false);
     }
@@ -155,40 +157,26 @@ export default function Home({ navigation }: Props) {
           onChangeText={(val) => setSearch(val)}
           onPressIcon={() => setToggle((prev) => !prev)}
           icon="magnify"
-          style={{ flex: 1, marginRight: size.l, marginBottom: 0 }}
+          style={{ flex: 1, marginRight: Spacing.l, marginBottom: 0 }}
         />
         <Feather
           name="heart"
           size={24}
           style={{ marginRight: 16 }}
-          onPress={() => navigation.navigate("Favourites")}
+          onPress={() => navigation.navigate('Favourites')}
         />
         <Feather name="bell" size={24} />
       </View>
 
-      <View style={{ marginTop: size.l }}>
-        <Text style={typography.label3}>Lelang Terbaru</Text>
-        <View style={{ marginTop: size.l, flexShrink: 2 }}>
+      <View style={{ marginTop: Spacing.l }}>
+        <Text style={Typography.label3}>Lelang Terbaru</Text>
+        <View style={{ marginTop: Spacing.l, flexShrink: 2 }}>
           {loading || refreshing ? (
-            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            <View
+              style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.l }}
+            >
               {Array.from(Array(10).keys()).map((_, i) => {
-                const skeletonWidth =
-                  (Dimensions.get("window").width - 2 * size.xl - size.l) / 2;
-
-                const hasMarginRight = i % 2 == 0
-
-                return (
-                  <Skeleton
-                    key={i}
-                    style={{
-                      width: skeletonWidth,
-                      height: 250,
-                      borderRadius: size.s,
-                      marginRight: hasMarginRight ? size.l : 0,
-                      marginBottom: size.l,
-                    }}
-                  />
-                );
+                return <Skeleton key={i} style={styles.skeleton} />;
               })}
             </View>
           ) : (
@@ -222,12 +210,17 @@ export default function Home({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: (Bar.currentHeight || size.l) + size.l,
-    paddingHorizontal: size.xl,
+    paddingTop: (Bar.currentHeight || Spacing.l) + Spacing.l,
+    paddingHorizontal: Spacing.xl,
   },
   headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  skeleton: {
+    width: SKELETON_WIDTH,
+    height: 250,
+    borderRadius: Spacing.s,
   },
 });

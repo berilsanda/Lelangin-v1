@@ -1,16 +1,17 @@
-import { useState } from "react";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import React, { useState } from 'react';
 import {
   TouchableWithoutFeedback,
   Modal,
   View,
   StyleSheet,
   StyleProp,
-} from "react-native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import FastImage, { FastImageProps, ImageStyle } from "react-native-fast-image";
+} from 'react-native';
+import FastImage, { FastImageProps, ImageStyle } from 'react-native-fast-image';
 
-import { colors, size } from "src/data/globals";
-import ImageZooms from "./ImageZooms";
+import ImageZooms from './ImageZooms';
+
+import { Colors, Spacing } from '@/config/constant';
 
 interface ImageLightboxProps extends FastImageProps {
   style?: StyleProp<ImageStyle>;
@@ -24,7 +25,7 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({
   const [showModal, setShowModal] = useState(false);
 
   function getUri() {
-    if (typeof source === "object" && source !== null && "uri" in source) {
+    if (typeof source === 'object' && source !== null && 'uri' in source) {
       return source.uri;
     }
 
@@ -46,16 +47,16 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({
         transparent
       >
         <MaterialCommunityIcons
-          name={"close"}
+          name={'close'}
           size={24}
-          color={colors.surface}
+          color={Colors.surface}
           onPress={() => setShowModal(false)}
           style={styles.iconStyles}
         />
         <View
           style={[
             StyleSheet.absoluteFillObject,
-            { backgroundColor: "rgba(0,0,0,0.5)" },
+            { backgroundColor: 'rgba(0,0,0,0.5)' },
           ]}
         />
         <ImageZooms uri={uri} />
@@ -66,9 +67,9 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({
 
 const styles = StyleSheet.create({
   iconStyles: {
-    position: "absolute",
-    right: size.xl,
-    top: size.l,
+    position: 'absolute',
+    right: Spacing.xl,
+    top: Spacing.l,
     zIndex: 99,
   },
 });

@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase/firestore";
+import { Timestamp } from 'firebase/firestore';
 
 // Serialize Firestore Timestamp data
 // to avoid error when used with redux or passing it as params
@@ -12,7 +12,7 @@ export default function serializeTime(dateObject: Timestamp): string | null {
   }
   const { seconds, nanoseconds } = dateObject;
 
-  // Calculate miliseconds data then convert it to a Date and save it as ISO String value 
+  // Calculate miliseconds data then convert it to a Date and save it as ISO String value
   const milliseconds = seconds * 1000 + nanoseconds / 1000000;
   const serializedDate = new Date(milliseconds).toISOString();
 

@@ -23,16 +23,15 @@
     "paths": {
       "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
       "assets/*": ["./assets/*"],
-      "src/*": ["./src/*"],
-      "components/*": ["./src/components/*"],
-      "atoms/*": ["./src/components/atoms/*"],
-      "molecules/*": ["./src/components/molecules/*"],
-      "organisms/*": ["./src/components/organisms/*"],
-      "data/*": ["./src/data/*"],
-      "navigations/*": ["./src/navigations/*"],
-      "screens/*": ["./src/screens/*"],
-      "services/*": ["./src/services/*"],
-      "utils/*": ["./src/utils/*"]
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/config/*": ["./src/config/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/data/*": ["./src/data/*"],
+      "@/navigations/*": ["./src/navigations/*"],
+      "@/screens/*": ["./src/screens/*"],
+      "@/services/*": ["./src/services/*"],
+      "@/utils/*": ["./src/utils/*"]
     },
     "typeRoots": ["./types"]
   },

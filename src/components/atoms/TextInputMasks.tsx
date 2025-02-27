@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import React, { useState } from 'react';
 import {
   NativeSyntheticEvent,
   StyleSheet,
@@ -7,15 +8,14 @@ import {
   TextInputProps,
   View,
   ViewStyle,
-} from "react-native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+} from 'react-native';
 import {
   TextInputMask,
   TextInputMaskOptionProp,
   TextInputMaskTypeProp,
-} from "react-native-masked-text";
+} from 'react-native-masked-text';
 
-import { colors, size, typography } from "data/globals";
+import { Colors, Spacing, Typography } from '@/config/constant';
 
 interface TextInputMasksProps extends TextInputProps {
   label?: string;
@@ -49,7 +49,7 @@ const TextInputMasks: React.FC<TextInputMasksProps> = ({
   onBlur,
   error,
   onPressIcon,
-  type = "only-numbers",
+  type = 'only-numbers',
   options,
   ...textInputProps
 }) => {
@@ -58,11 +58,11 @@ const TextInputMasks: React.FC<TextInputMasksProps> = ({
   return (
     <View style={[styles.viewStyles, style]}>
       {label ? (
-        <Text style={{ ...typography.paragraph3, marginBottom: size.m }}>
+        <Text style={{ ...Typography.paragraph3, marginBottom: Spacing.m }}>
           {label}
         </Text>
       ) : null}
-      <View style={{ justifyContent: "center" }}>
+      <View style={{ justifyContent: 'center' }}>
         <TextInputMask
           placeholder={placeholder}
           defaultValue={defaultValue}
@@ -84,24 +84,24 @@ const TextInputMasks: React.FC<TextInputMasksProps> = ({
             {
               paddingVertical: multiline ? 10 : 5,
               borderColor: error
-                ? colors.warning
+                ? Colors.warning
                 : isFocused
-                ? colors.primary
-                : colors.grey.light,
+                  ? Colors.primary
+                  : Colors.grey.light,
             },
             inputStyle,
           ]}
-          selectionColor={colors.primaryContainer}
-          cursorColor={colors.primary}
+          selectionColor={Colors.primaryContainer}
+          cursorColor={Colors.primary}
           multiline={multiline}
-          textAlignVertical={multiline ? "top" : "center"}
+          textAlignVertical={multiline ? 'top' : 'center'}
           {...textInputProps}
         />
         {icon ? (
           <MaterialCommunityIcons
             name={icon}
             size={20}
-            color={colors.grey.dark}
+            color={Colors.grey.dark}
             onPress={onPressIcon}
             style={styles.iconStyles}
           />
@@ -114,21 +114,21 @@ const TextInputMasks: React.FC<TextInputMasksProps> = ({
 
 const styles = StyleSheet.create({
   viewStyles: {
-    marginBottom: size.l,
+    marginBottom: Spacing.l,
   },
   inputStyles: {
-    paddingHorizontal: size.l,
+    paddingHorizontal: Spacing.l,
     borderWidth: 1,
-    borderRadius: size.s,
+    borderRadius: Spacing.s,
   },
   iconStyles: {
-    position: "absolute",
-    right: size.l,
+    position: 'absolute',
+    right: Spacing.l,
   },
   errorText: {
-    marginTop: size.s,
-    color: colors.warning,
-    ...typography.paragraph3,
+    marginTop: Spacing.s,
+    color: Colors.warning,
+    ...Typography.paragraph3,
   },
 });
 

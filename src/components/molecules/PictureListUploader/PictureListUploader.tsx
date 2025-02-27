@@ -1,3 +1,5 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import React, { Dispatch, SetStateAction } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -5,19 +7,19 @@ import {
   TouchableOpacity,
   View,
   ViewStyle,
-} from "react-native";
-import React, { Dispatch, SetStateAction } from "react";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+} from 'react-native';
+import { Source } from 'react-native-fast-image';
 
-import { colors, size, typography } from "src/data/globals";
-import ImageItem from "./ImageItem";
-import pickImage from "src/utils/imagePicker";
+import ImageItem from './ImageItem';
+
+import { Colors, Spacing, Typography } from '@/config/constant';
+import pickImage from '@/utils/imagePicker';
 
 interface PictureListUploaderProps {
   label: string;
   style?: ViewStyle;
-  pictureList: string[];
-  setPictureList: Dispatch<SetStateAction<string[]>>;
+  pictureList: Source[];
+  setPictureList: Dispatch<SetStateAction<Source[]>>;
   error?: string;
 }
 
@@ -27,7 +29,7 @@ const PictureListUploader: React.FC<PictureListUploaderProps> = ({
   error,
 }) => {
   const deletePicture = (index: number) => {
-    let newList = pictureList.filter((item, idx) => {
+    const newList = pictureList.filter((item, idx) => {
       if (idx != index) {
         return item;
       }
@@ -38,8 +40,8 @@ const PictureListUploader: React.FC<PictureListUploaderProps> = ({
   };
 
   return (
-    <View style={{ marginBottom: size.l }}>
-      <Text style={{ ...typography.paragraph3, marginBottom: size.m }}>
+    <View style={{ marginBottom: Spacing.l }}>
+      <Text style={{ ...Typography.paragraph3, marginBottom: Spacing.m }}>
         Foto Barang
       </Text>
       <ScrollView horizontal>
@@ -47,7 +49,7 @@ const PictureListUploader: React.FC<PictureListUploaderProps> = ({
           <TouchableOpacity
             style={styles.addBtn}
             onPress={async () => {
-              let pickedImage = await pickImage("galery");
+              const pickedImage = await pickImage('galery');
               if (pickedImage != null) {
                 setPictureList([...pictureList, pickedImage]);
               }
@@ -55,9 +57,9 @@ const PictureListUploader: React.FC<PictureListUploaderProps> = ({
             activeOpacity={0.5}
           >
             <MaterialCommunityIcons
-              name={"plus"}
+              name={'plus'}
               size={24}
-              color={colors.primary}
+              color={Colors.primary}
             />
           </TouchableOpacity>
         )}
@@ -82,16 +84,16 @@ const PictureListUploader: React.FC<PictureListUploaderProps> = ({
 const styles = StyleSheet.create({
   addBtn: {
     borderWidth: 1,
-    borderRadius: size.s,
-    borderStyle: "dashed",
-    borderColor: colors.primary,
-    alignSelf: "flex-start",
+    borderRadius: Spacing.s,
+    borderStyle: 'dashed',
+    borderColor: Colors.primary,
+    alignSelf: 'flex-start',
     padding: 36,
   },
   errorText: {
-    marginTop: size.s,
-    color: colors.warning,
-    ...typography.paragraph3,
+    marginTop: Spacing.s,
+    color: Colors.warning,
+    ...Typography.paragraph3,
   },
 });
 

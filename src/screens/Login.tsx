@@ -1,3 +1,7 @@
+import { yupResolver } from '@hookform/resolvers/yup';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   Alert,
   Dimensions,
@@ -6,34 +10,31 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-} from "react-native";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { AppTextInputs, Buttons } from "components/atoms";
-import { colors, size, typography } from "data/globals";
-import { UserLogin } from "src/services/firebase";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StackParamList } from "src/navigations/MainNavigator";
+} from 'react-native';
+import { StackParamList } from 'src/navigations/MainNavigator';
+import { UserLogin } from 'src/services/firebase';
+import * as yup from 'yup';
+
+import { AppTextInputs, Buttons } from '@/components/atoms';
+import { Colors, Spacing, Typography } from '@/config/constant';
 
 type LoginData = { email: string; password: string };
 
-const WINDOW_WIDTH = Dimensions.get("window").width;
-const WINDOW_HEIGHT = Dimensions.get("window").height;
+const WINDOW_WIDTH = Dimensions.get('window').width;
+const WINDOW_HEIGHT = Dimensions.get('window').height;
 
 const schema = yup.object().shape({
   email: yup
     .string()
-    .email("Format email salah")
-    .required("Silahkan masukkan email"),
+    .email('Format email salah')
+    .required('Silahkan masukkan email'),
   password: yup
     .string()
-    .min(8, "Password minimal 8 karakter")
-    .required("Silahkan masukkan password"),
+    .min(8, 'Password minimal 8 karakter')
+    .required('Silahkan masukkan password'),
 });
 
-type Props = NativeStackScreenProps<StackParamList, "Login">;
+type Props = NativeStackScreenProps<StackParamList, 'Login'>;
 
 export default function Login({ navigation }: Props) {
   const [loading, setLoading] = useState(false);
@@ -47,9 +48,9 @@ export default function Login({ navigation }: Props) {
     try {
       await UserLogin(data.email, data.password);
       reset();
-      navigation.navigate("SplashScreen");
+      navigation.navigate('SplashScreen');
     } catch (error: any) {
-      Alert.alert("Gagal", error.message);
+      Alert.alert('Gagal', error.message);
     } finally {
       setLoading(false);
     }
@@ -59,15 +60,9 @@ export default function Login({ navigation }: Props) {
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
         <Image
-          style={{
-            height: 40,
-            width: WINDOW_WIDTH * 0.75,
-            alignSelf: "center",
-            marginTop: WINDOW_HEIGHT * 0.25,
-            marginBottom: 64,
-          }}
+          style={styles.logo}
           resizeMode="contain"
-          source={require("assets/logo.png")}
+          source={require('assets/logo.png')}
         />
         <AppTextInputs
           name="email"
@@ -85,27 +80,29 @@ export default function Login({ navigation }: Props) {
           disabled={loading}
         />
         <Text
-          style={{
-            ...typography.label3,
-            textAlign: "right",
-            marginBottom: size.l,
-          }}
+          style={[
+            Typography.label3,
+            {
+              textAlign: 'right',
+              marginBottom: Spacing.l,
+            },
+          ]}
         >
           Lupa Password?
         </Text>
         <Buttons
           label="Masuk"
           onPress={handleSubmit(onSubmit)}
-          style={{ marginBottom: size.l }}
+          style={{ marginBottom: Spacing.l }}
           disabled={loading}
           loading={loading}
         />
-        <Text style={{ ...typography.paragraph3, textAlign: "center" }}>
-          Belum punya akun?{" "}
+        <Text style={[Typography.paragraph3, { textAlign: 'center' }]}>
+          Belum punya akun?{' '}
           <Text
-            style={{ ...typography.label3, color: colors.primary }}
+            style={[Typography.paragraph3, { color: Colors.primary }]}
             suppressHighlighting
-            onPress={() => navigation.navigate("Register")}
+            onPress={() => navigation.navigate('Register')}
           >
             Daftar disini.
           </Text>
@@ -118,7 +115,14 @@ export default function Login({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: size.xl,
-    paddingVertical: size.l,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.l,
+  },
+  logo: {
+    alignSelf: 'center',
+    height: 40,
+    width: WINDOW_WIDTH * 0.75,
+    marginTop: WINDOW_HEIGHT * 0.25,
+    marginBottom: 64,
   },
 });

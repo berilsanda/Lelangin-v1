@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import React, { useState } from 'react';
 import {
   NativeSyntheticEvent,
   StyleSheet,
@@ -9,10 +10,9 @@ import {
   TextStyle,
   View,
   ViewStyle,
-} from "react-native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+} from 'react-native';
 
-import { colors, size, typography } from "data/globals";
+import { Colors, Spacing, Typography } from '@/config/constant';
 
 interface TextInputsProps extends TextInputProps {
   label?: string;
@@ -57,8 +57,12 @@ const TextInputs: React.FC<TextInputsProps> = ({
 
   return (
     <View style={[styles.viewStyles, style]}>
-      {label ? <Text style={{...typography.paragraph3, marginBottom: size.m }}>{label}</Text> : null}
-      <View style={{ justifyContent: "center" }}>
+      {label ? (
+        <Text style={{ ...Typography.paragraph3, marginBottom: Spacing.m }}>
+          {label}
+        </Text>
+      ) : null}
+      <View style={{ justifyContent: 'center' }}>
         <TextInput
           placeholder={placeholder}
           defaultValue={defaultValue}
@@ -72,38 +76,38 @@ const TextInputs: React.FC<TextInputsProps> = ({
           }}
           secureTextEntry={showPassword}
           style={[
-            typography.paragraph3,
+            Typography.paragraph3,
             styles.inputStyles,
             {
               paddingVertical: multiline ? 10 : 5,
               borderColor: error
-                ? colors.warning
+                ? Colors.warning
                 : isFocused
-                ? colors.primary
-                : colors.grey.light,
+                  ? Colors.primary
+                  : Colors.grey.light,
             },
             inputStyle,
           ]}
-          selectionColor={colors.primaryContainer}
-          cursorColor={colors.primary}
+          selectionColor={Colors.primaryContainer}
+          cursorColor={Colors.primary}
           multiline={multiline}
-          textAlignVertical={multiline ? "top" : "center"}
+          textAlignVertical={multiline ? 'top' : 'center'}
           {...textInputProps}
         />
         {icon && !secureTextEntry ? (
           <MaterialCommunityIcons
             name={icon}
             size={20}
-            color={colors.grey.dark}
+            color={Colors.grey.dark}
             onPress={onPressIcon}
             style={styles.iconStyles}
           />
         ) : null}
         {secureTextEntry ? (
           <MaterialCommunityIcons
-            name={showPassword ? "eye-outline" : "eye-off-outline"}
+            name={showPassword ? 'eye-outline' : 'eye-off-outline'}
             size={20}
-            color={colors.grey.dark}
+            color={Colors.grey.dark}
             onPress={togglePasswordVisibility}
             style={styles.iconStyles}
           />
@@ -116,21 +120,21 @@ const TextInputs: React.FC<TextInputsProps> = ({
 
 const styles = StyleSheet.create({
   viewStyles: {
-    marginBottom: size.l,
+    marginBottom: Spacing.l,
   },
   inputStyles: {
-    paddingHorizontal: size.l,
+    paddingHorizontal: Spacing.l,
     borderWidth: 1,
-    borderRadius: size.s,
+    borderRadius: Spacing.s,
   },
   iconStyles: {
-    position: "absolute",
-    right: size.l
+    position: 'absolute',
+    right: Spacing.l,
   },
   errorText: {
-    marginTop: size.s,
-    color: colors.warning,
-    ...typography.paragraph3
+    marginTop: Spacing.s,
+    color: Colors.warning,
+    ...Typography.paragraph3,
   },
 });
 

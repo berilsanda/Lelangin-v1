@@ -1,12 +1,14 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Login from "screens/Login";
-import Register, { UserRegisterData } from "screens/Register/Register";
-import SplashScreen from "src/screens/SplashScreen";
-import HomeNavigator from "./HomeNavigator";
-import UserDetail from "src/screens/Register/UserDetail";
-import AddAuction from "src/screens/AddAuction";
-import DetailAuction from "src/screens/DetailAuction";
-import FavouriteAuction from "src/screens/FavouriteAuction";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AddAuction from 'src/screens/AddAuction';
+import DetailAuction from 'src/screens/DetailAuction';
+import FavouriteAuction from 'src/screens/FavouriteAuction';
+import UserDetail from 'src/screens/Register/UserDetail';
+import SplashScreen from 'src/screens/SplashScreen';
+
+import HomeNavigator from './HomeNavigator';
+
+import Login from '@/screens/Login';
+import Register, { UserRegisterData } from '@/screens/Register/Register';
 
 export type StackParamList = {
   HomeNav: undefined;
@@ -28,7 +30,7 @@ export default function MainNavigator() {
       screenOptions={{
         headerShown: false,
         headerTitleStyle: {
-          fontFamily: "NunitoSans_700Bold",
+          fontFamily: 'NunitoSans_700Bold',
           fontSize: 18,
         },
       }}
@@ -44,7 +46,7 @@ export default function MainNavigator() {
         options={{
           headerShown: true,
           headerShadowVisible: false,
-          title: "Tambah Lelang",
+          title: 'Tambah Lelang',
         }}
       />
       <Stack.Screen
@@ -53,7 +55,7 @@ export default function MainNavigator() {
         options={{
           headerShown: true,
           headerShadowVisible: false,
-          title: "Detail Lelang",
+          title: 'Detail Lelang',
         }}
       />
       <Stack.Screen
@@ -62,7 +64,7 @@ export default function MainNavigator() {
         options={{
           headerShown: true,
           headerShadowVisible: false,
-          title: "Lelang Disimpan",
+          title: 'Lelang Disimpan',
         }}
       />
     </Stack.Navigator>

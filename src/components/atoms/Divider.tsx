@@ -1,11 +1,13 @@
+import React from 'react';
 import {
   StyleProp,
   StyleSheet,
   View,
   ViewProps,
   ViewStyle,
-} from "react-native";
-import { colors, size } from "src/data/globals";
+} from 'react-native';
+
+import { Colors, Spacing } from '@/config/constant';
 
 interface DividerProps extends ViewProps {
   style?: StyleProp<ViewStyle>;
@@ -17,9 +19,9 @@ const Divider: React.FC<DividerProps> = ({ style: AddOnStyle }) => {
 
 const styles = StyleSheet.create({
   separator: {
-    marginVertical: size.l,
+    marginVertical: Spacing.l,
     borderTopWidth: 1,
-    borderColor: colors.grey.light,
+    borderColor: Colors.grey.light,
   },
 });
 

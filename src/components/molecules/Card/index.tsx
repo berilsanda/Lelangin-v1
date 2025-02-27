@@ -1,7 +1,4 @@
-import AuctionerCard from "./AuctionerCard";
-import ItemCard from "./ItemCard";
+import AuctionerCard from './AuctionerCard';
+import ItemCard from './ItemCard';
 
-export {
-    AuctionerCard,
-    ItemCard
-}
+export { AuctionerCard, ItemCard };

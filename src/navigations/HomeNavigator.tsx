@@ -1,11 +1,17 @@
-import { BottomTabNavigationProp, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Feather from "@expo/vector-icons/Feather";
-import Home from "src/screens/Home";
-import Transaction from "src/screens/Transaction/Transaction";
-import AccountNavigator from "./AccountNavigator";
-import { CompositeNavigationProp, useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StackParamList } from "./MainNavigator";
+import Feather from '@expo/vector-icons/Feather';
+import {
+  BottomTabNavigationProp,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
+import {
+  CompositeNavigationProp,
+  useNavigation,
+} from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Home from 'src/screens/Home';
+
+import AccountNavigator from './AccountNavigator';
+import { StackParamList } from './MainNavigator';
 
 export type TabParamList = {
   Home: undefined;
@@ -17,12 +23,12 @@ export type TabParamList = {
 type NavigationProps = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList>,
   NativeStackNavigationProp<StackParamList>
->
+>;
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
 export default function HomeNavigator() {
-const navigation = useNavigation<NavigationProps>()
+  const navigation = useNavigation<NavigationProps>();
 
   const AddLelangComponent = () => {
     return null;
@@ -34,7 +40,7 @@ const navigation = useNavigation<NavigationProps>()
       screenOptions={{
         tabBarShowLabel: false,
         headerTitleStyle: {
-          fontFamily: "NunitoSans_700Bold",
+          fontFamily: 'NunitoSans_700Bold',
           fontSize: 18,
         },
       }}
@@ -62,7 +68,7 @@ const navigation = useNavigation<NavigationProps>()
         name="TambahLelang"
         component={AddLelangComponent}
         listeners={{
-          tabPress: e => {
+          tabPress: (e) => {
             e.preventDefault();
 
             navigation.navigate('TambahLelang');

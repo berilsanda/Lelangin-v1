@@ -1,3 +1,9 @@
+import Feather from '@expo/vector-icons/Feather';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { CommonActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { signOut } from 'firebase/auth';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,25 +12,19 @@ import {
   TouchableOpacity,
   ViewStyle,
   ActivityIndicator,
-} from "react-native";
-import React, { useState } from "react";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { CommonActions } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
-import { signOut } from "firebase/auth";
-import Feather from "@expo/vector-icons/Feather";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import FastImage from "react-native-fast-image";
+} from 'react-native';
+import FastImage from 'react-native-fast-image';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { TextInputs, AppModals, Buttons } from "components/atoms";
-import { colors, size, typography } from "data/globals";
-import { AccountStackParamList } from "navigations/AccountNavigator";
-import { resetUser, setUser } from "src/reduxs/reducer/persistReducer";
-import { auth, updateUser } from "services/firebase";
-import uploadImageAsync from "services/uploadImageAsync";
-import pickImage from "utils/imagePicker";
+import { AppModals, Buttons, TextInputs } from '@/components/atoms';
+import { Colors, Spacing, Typography } from '@/config/constant';
+import { AccountStackParamList } from '@/navigations/AccountNavigator';
+import { auth, updateUser } from '@/services/firebase';
+import uploadImageAsync from '@/services/uploadImageAsync';
+import { resetUser, setUser } from '@/stores/reducer/persistReducer';
+import pickImage from '@/utils/imagePicker';
 
-type Props = NativeStackScreenProps<AccountStackParamList, "Account">;
+type Props = NativeStackScreenProps<AccountStackParamList, 'Account'>;
 
 export default function Account({ navigation }: Props) {
   const dispatch = useDispatch();
@@ -52,13 +52,13 @@ export default function Account({ navigation }: Props) {
           index: 0,
           routes: [
             {
-              name: "SplashScreen",
+              name: 'SplashScreen',
             },
           ],
-        })
+        }),
       );
     } catch (error: any) {
-      Alert.alert("Gagal", error.message);
+      Alert.alert('Gagal', error.message);
     } finally {
       setLoading(false);
     }
@@ -67,11 +67,11 @@ export default function Account({ navigation }: Props) {
   async function onSubmit() {
     //Validation
     if (userImage == null || userName!.trim().length == 0) {
-      return Alert.alert("", "Data tidak boleh kosong!");
+      return Alert.alert('', 'Data tidak boleh kosong!');
     }
 
     if (userName!.trim().length < 4) {
-      return Alert.alert("", "Nama minimal berisi 4 karakter!");
+      return Alert.alert('', 'Nama minimal berisi 4 karakter!');
     }
 
     setLoadingModal(true);
@@ -88,7 +88,7 @@ export default function Account({ navigation }: Props) {
       dispatch(setUser({ displayName: userName, photoURL: photo }));
       setModalVisible(false);
     } catch (error: any) {
-      Alert.alert("Gagal", error.message);
+      Alert.alert('Gagal', error.message);
     } finally {
       setLoadingModal(false);
     }
@@ -111,13 +111,13 @@ export default function Account({ navigation }: Props) {
       <TouchableOpacity onPress={onPress} style={[styles.itemList, style]}>
         {loading ? (
           <ActivityIndicator
-            color={colors.grey.dark}
+            color={Colors.grey.dark}
             size={18}
-            style={{ marginRight: size.m }}
+            style={{ marginRight: Spacing.m }}
           />
         ) : null}
-        <Text style={{ ...typography.paragraph3, flex: 1 }}>{label}</Text>
-        <Feather name="chevron-right" color={colors.grey.dark} />
+        <Text style={{ ...Typography.paragraph3, flex: 1 }}>{label}</Text>
+        <Feather name="chevron-right" color={Colors.grey.dark} />
       </TouchableOpacity>
     );
   };
@@ -125,7 +125,7 @@ export default function Account({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        {!!userData?.photoURL ? (
+        {userData?.photoURL ? (
           <FastImage
             source={{ uri: userData?.photoURL }}
             style={styles.image}
@@ -135,18 +135,18 @@ export default function Account({ navigation }: Props) {
           <View style={styles.image}>
             <MaterialCommunityIcons
               name="image-off-outline"
-              color={colors.grey.dark}
+              color={Colors.grey.dark}
               size={20}
             />
           </View>
         )}
 
         <View style={{ flex: 1 }}>
-          <Text style={typography.label2}>
-            {userData.displayName || "Belum ada nama"}
+          <Text style={Typography.label2}>
+            {userData.displayName || 'Belum ada nama'}
           </Text>
           <Text
-            style={{ ...typography.paragraph3, color: colors.textSecondary }}
+            style={{ ...Typography.paragraph3, color: Colors.textSecondary }}
           >
             {userData.email}
           </Text>
@@ -154,7 +154,7 @@ export default function Account({ navigation }: Props) {
 
         <MaterialCommunityIcons
           name="pencil-outline"
-          color={colors.grey.dark}
+          color={Colors.grey.dark}
           size={24}
           onPress={() => setModalVisible(true)}
         />
@@ -162,7 +162,7 @@ export default function Account({ navigation }: Props) {
 
       <ItemList
         label="Ubah Password"
-        onPress={() => navigation.navigate("ChangePassword")}
+        onPress={() => navigation.navigate('ChangePassword')}
       />
       <View style={styles.divider} />
       <ItemList
@@ -175,12 +175,11 @@ export default function Account({ navigation }: Props) {
       <AppModals
         visible={modalVisible}
         onDismiss={() => (loadingModal ? null : onCloseModal())}
-        style={{ paddingHorizontal: size.xl }}
+        style={{ paddingHorizontal: Spacing.xl }}
       >
         <View style={styles.modalContainer}>
-          
           <View style={styles.modalHeader}>
-            <Text style={typography.label3}>Edit Profil</Text>
+            <Text style={Typography.label3}>Edit Profil</Text>
             <MaterialCommunityIcons
               name="close"
               size={20}
@@ -194,14 +193,14 @@ export default function Account({ navigation }: Props) {
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={async () => {
-                  let pickedImage = await pickImage("galery");
+                  const pickedImage = await pickImage('galery');
                   if (pickedImage != null) {
-                    setUserImage(pickedImage);
+                    setUserImage(pickedImage.uri);
                   }
                 }}
-                style={{ alignSelf: "center", marginBottom: size.l }}
+                style={{ alignSelf: 'center', marginBottom: Spacing.l }}
               >
-                {!!userImage ? (
+                {userImage ? (
                   <FastImage
                     source={{ uri: userImage }}
                     style={styles.image}
@@ -211,14 +210,14 @@ export default function Account({ navigation }: Props) {
                   <View style={styles.image}>
                     <MaterialCommunityIcons
                       name="image-off-outline"
-                      color={colors.grey.dark}
+                      color={Colors.grey.dark}
                       size={20}
                     />
                   </View>
                 )}
               </TouchableOpacity>
 
-              {!!userImage ? (
+              {userImage ? (
                 <TouchableOpacity
                   style={styles.deleteImage}
                   onPress={() => setUserImage(null)}
@@ -230,7 +229,7 @@ export default function Account({ navigation }: Props) {
 
             {/* Username Input */}
             <TextInputs
-              value={userName ?? ""}
+              value={userName ?? ''}
               placeholder="Masukkan nama anda"
               onChangeText={(val) => setUserName(val)}
             />
@@ -251,53 +250,53 @@ export default function Account({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: size.xl,
+    paddingHorizontal: Spacing.xl,
   },
   headerContainer: {
-    marginBottom: size.l,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    marginBottom: Spacing.l,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   itemList: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: size.l,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: Spacing.l,
   },
   divider: {
     borderTopWidth: 1,
-    borderColor: colors.grey.light,
-    width: "100%",
+    borderColor: Colors.grey.light,
+    width: '100%',
   },
   image: {
     height: 64,
     width: 64,
-    borderRadius: size.s,
-    overflow: "hidden",
-    backgroundColor: colors.grey.light,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: size.l,
+    borderRadius: Spacing.s,
+    overflow: 'hidden',
+    backgroundColor: Colors.grey.light,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.l,
   },
   modalContainer: {
-    backgroundColor: colors.surface,
-    borderRadius: size.s,
-    marginHorizontal: size.xl,
-    padding: size.l,
-    width: "100%",
+    backgroundColor: Colors.surface,
+    borderRadius: Spacing.s,
+    marginHorizontal: Spacing.xl,
+    padding: Spacing.l,
+    width: '100%',
   },
   modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: size.l,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.l,
   },
   deleteImage: {
-    position: "absolute",
-    right: "40%",
+    position: 'absolute',
+    right: '40%',
     top: -12,
-    backgroundColor: colors.primaryContainer,
+    backgroundColor: Colors.primaryContainer,
     borderRadius: 50,
     padding: 4,
   },

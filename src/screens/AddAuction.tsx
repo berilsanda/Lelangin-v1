@@ -1,31 +1,32 @@
-import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import uuid from "react-native-uuid";
-
-import { colors, size, typography } from "src/data/globals";
+import { STORAGE_BUCKET } from '@env';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
+import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Source } from 'react-native-fast-image';
+import uuid from 'react-native-uuid';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   AppTextInputs,
   AppTextInputMasks,
   Buttons,
   Divider,
   AppDateTimePicker,
-} from "src/components/atoms";
-import { PictureListUploader, RadioGroups } from "src/components/molecules";
-import moment from "moment";
-import { useDispatch, useSelector } from "react-redux";
-import { addProducts } from "src/services/firebase";
-import { STORAGE_BUCKET } from "@env";
-import uploadImageAsync from "src/services/uploadImageAsync";
-import { StackParamList } from "src/navigations/MainNavigator";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import combineDateTime from "src/utils/combineDateTime";
-import { toggleHomeUpdate } from "src/reduxs/reducer/tempReducer";
+} from 'src/components/atoms';
+import { PictureListUploader, RadioGroups } from 'src/components/molecules';
+import { StackParamList } from 'src/navigations/MainNavigator';
+import { addProducts } from 'src/services/firebase';
+import uploadImageAsync from 'src/services/uploadImageAsync';
+import combineDateTime from 'src/utils/combineDateTime';
+import * as yup from 'yup';
+
+import { Colors, Spacing, Typography } from '@/config/constant';
+import { toggleHomeUpdate } from '@/stores/reducer/tempReducer';
 
 type FormData = {
-  pictureList: string[];
+  pictureList: Source[];
   title: string;
   description: string;
   conditions: string;
@@ -38,46 +39,51 @@ type FormData = {
 const schema = yup.object().shape({
   pictureList: yup
     .array()
-    .of(yup.string().required())
-    .min(1, "Foto tidak boleh kosong.")
-    .required("Harap pilih foto."),
-  title: yup.string().required("Silahkan isi nama barang."),
-  description: yup.string().required("Silahkan masukkan deskripsi barang."),
-  conditions: yup.string().required("Silahkan pilih kondisi barang."),
+    .of(
+      yup.object({
+        uri: yup.string(),
+      }),
+    )
+    .required()
+    .min(1, 'Foto tidak boleh kosong.')
+    .required('Harap pilih foto.'),
+  title: yup.string().required('Silahkan isi nama barang.'),
+  description: yup.string().required('Silahkan masukkan deskripsi barang.'),
+  conditions: yup.string().required('Silahkan pilih kondisi barang.'),
   startingBid: yup
     .number()
-    .required("Silahkan masukkan harga awal.")
-    .min(1000, "Minimal harga awal Rp 1.000")
+    .required('Silahkan masukkan harga awal.')
+    .min(1000, 'Minimal harga awal Rp 1.000')
     .test(
-      "is-divisible-by-100",
-      "Masukkan nilai yang dapat dibagi 100.",
+      'is-divisible-by-100',
+      'Masukkan nilai yang dapat dibagi 100.',
       (value) => {
         return value % 100 === 0;
-      }
+      },
     ),
   stepBid: yup
     .number()
-    .required("Silahkan masukkan kelipatan harga.")
-    .min(1000, "Minimal kelipatan harga Rp 1.000")
+    .required('Silahkan masukkan kelipatan harga.')
+    .min(1000, 'Minimal kelipatan harga Rp 1.000')
     .test(
-      "is-divisible-by-100",
-      "Masukkan nilai yang dapat dibagi 100.",
+      'is-divisible-by-100',
+      'Masukkan nilai yang dapat dibagi 100.',
       (value) => {
         return value % 100 === 0;
-      }
+      },
     ),
-  timeAuctionEnd: yup.string().required("Silahkan pilih jam berakhir lelang."),
+  timeAuctionEnd: yup.string().required('Silahkan pilih jam berakhir lelang.'),
   dateAuctionEnd: yup
     .string()
-    .required("Silahkan pilih tanggal berakhir lelang.")
+    .required('Silahkan pilih tanggal berakhir lelang.')
     .test(
-      "dateInNotPast",
-      "Tidak bisa pilih tanggal kemarin.",
-      (value) => !value || moment(value).isSameOrAfter(moment(), "day")
+      'dateInNotPast',
+      'Tidak bisa pilih tanggal kemarin.',
+      (value) => !value || moment(value).isSameOrAfter(moment(), 'day'),
     ),
 });
 
-type Props = NativeStackScreenProps<StackParamList, "TambahLelang">;
+type Props = NativeStackScreenProps<StackParamList, 'TambahLelang'>;
 
 export default function AddAuction({ navigation }: Props) {
   // Todo :
@@ -94,26 +100,26 @@ export default function AddAuction({ navigation }: Props) {
   async function onSubmit(data: FormData) {
     setLoading(true);
     try {
-      let productId = uuid.v4();
+      const productId = uuid.v4();
 
       // upload image
       const pathToUpload = `Product/${productId}/Images`;
       const imageList = await Promise.all(
         data.pictureList.map(async (picture) => {
-          let image = picture;
-          if (!picture.includes(STORAGE_BUCKET)) {
+          const image = picture;
+          if (!picture.uri!.includes(STORAGE_BUCKET)) {
             const imageId = uuid.v4();
-            image = await uploadImageAsync(
-              picture,
+            image.uri = await uploadImageAsync(
+              picture.uri!,
               pathToUpload,
-              `image ${imageId}`
+              `image ${imageId}`,
             );
           }
           return image;
-        })
+        }),
       );
 
-      let sendData = {
+      const sendData = {
         id: productId,
         auctionEnd: combineDateTime(data.dateAuctionEnd, data.timeAuctionEnd),
         bidder: [],
@@ -124,7 +130,7 @@ export default function AddAuction({ navigation }: Props) {
         description: data.description,
         images: imageList,
         startingBid: data.startingBid,
-        status: "active",
+        status: 'active',
         stepBid: data.stepBid && data.stepBid > 1000 ? data.stepBid : 1000,
         title: data.title,
         winner: null,
@@ -134,10 +140,10 @@ export default function AddAuction({ navigation }: Props) {
       dispatch(toggleHomeUpdate());
 
       reset();
-      Alert.alert("Berhasil", "Lelang anda berhasil ditambah!");
+      Alert.alert('Berhasil', 'Lelang anda berhasil ditambah!');
       navigation.goBack();
     } catch (error: any) {
-      Alert.alert("Kesalahan", error.message);
+      Alert.alert('Kesalahan', error.message);
     } finally {
       setLoading(false);
     }
@@ -146,7 +152,7 @@ export default function AddAuction({ navigation }: Props) {
     <View style={{ flex: 1 }}>
       <ScrollView
         style={styles.container}
-        contentContainerStyle={{ paddingBottom: size.l }}
+        contentContainerStyle={{ paddingBottom: Spacing.l }}
       >
         <Controller
           name="pictureList"
@@ -182,18 +188,18 @@ export default function AddAuction({ navigation }: Props) {
         <Controller
           name="conditions"
           control={control}
-          defaultValue={"new"}
+          defaultValue={'new'}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
               <RadioGroups
                 label="Kondisi Barang"
                 data={[
-                  { label: "Baru", value: "new" },
-                  { label: "Bekas", value: "used" },
+                  { label: 'Baru', value: 'new' },
+                  { label: 'Bekas', value: 'used' },
                 ]}
                 value={value}
                 setValue={onChange}
-                style={{ flexDirection: "row" }}
+                style={{ flexDirection: 'row' }}
               />
               {error ? (
                 <Text style={styles.errorText}>{error.message}</Text>
@@ -214,9 +220,9 @@ export default function AddAuction({ navigation }: Props) {
           type="money"
           options={{
             precision: 0,
-            separator: "",
-            delimiter: ".",
-            unit: "Rp ",
+            separator: '',
+            delimiter: '.',
+            unit: 'Rp ',
           }}
         />
         <AppTextInputMasks
@@ -230,22 +236,22 @@ export default function AddAuction({ navigation }: Props) {
           defaultValue="1000"
           options={{
             precision: 0,
-            separator: "",
-            delimiter: ".",
-            unit: "Rp ",
+            separator: '',
+            delimiter: '.',
+            unit: 'Rp ',
           }}
         />
 
         <Divider />
 
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <AppDateTimePicker
             name="timeAuctionEnd"
             label="Jam Berakhir"
             placeholder="Pilih Jam"
             control={control}
             type="time"
-            style={{ flex: 1, marginRight: size.l }}
+            style={{ flex: 1, marginRight: Spacing.l }}
           />
           <AppDateTimePicker
             name="dateAuctionEnd"
@@ -273,23 +279,23 @@ export default function AddAuction({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: size.xl,
-    paddingVertical: size.l,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.l,
   },
   bottomBtnContainer: {
-    paddingVertical: size.l,
-    paddingHorizontal: size.xl,
+    paddingVertical: Spacing.l,
+    paddingHorizontal: Spacing.xl,
     borderTopWidth: 1,
-    borderColor: colors.grey.light,
+    borderColor: Colors.grey.light,
   },
   separator: {
-    marginBottom: size.l,
+    marginBottom: Spacing.l,
     borderTopWidth: 1,
-    borderColor: colors.grey.light,
+    borderColor: Colors.grey.light,
   },
   errorText: {
-    marginTop: size.s,
-    color: colors.warning,
-    ...typography.paragraph3,
+    marginTop: Spacing.s,
+    color: Colors.warning,
+    ...Typography.paragraph3,
   },
 });

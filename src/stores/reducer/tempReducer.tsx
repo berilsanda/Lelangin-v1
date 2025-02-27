@@ -1,10 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   homeUpdateState: false,
 };
 
 export const tempSlice = createSlice({
-  name: "temp",
+  name: 'temp',
   initialState,
   reducers: {
     toggleHomeUpdate: (state) => {

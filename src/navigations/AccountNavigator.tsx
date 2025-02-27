@@ -1,6 +1,6 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Account from "src/screens/Account/Account";
-import ChangePassword from "src/screens/Account/ChangePassword";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Account from 'src/screens/Account/Account';
+import ChangePassword from 'src/screens/Account/ChangePassword';
 
 export type AccountStackParamList = {
   Account: undefined;
@@ -16,7 +16,7 @@ export default function AccountNavigator() {
       screenOptions={{
         headerShadowVisible: false,
         headerTitleStyle: {
-          fontFamily: "NunitoSans_700Bold",
+          fontFamily: 'NunitoSans_700Bold',
           fontSize: 18,
         },
       }}
@@ -25,7 +25,7 @@ export default function AccountNavigator() {
       <Stack.Screen
         name="ChangePassword"
         component={ChangePassword}
-        options={{ title: "Ubah Password" }}
+        options={{ title: 'Ubah Password' }}
       />
     </Stack.Navigator>
   );

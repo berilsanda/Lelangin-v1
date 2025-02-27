@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   Alert,
   SafeAreaView,
@@ -8,31 +12,27 @@ import {
   StatusBar as Bar,
   View,
   TouchableOpacity,
-} from "react-native";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import FastImage from "react-native-fast-image";
+} from 'react-native';
+import FastImage from 'react-native-fast-image';
+import { useDispatch } from 'react-redux';
+import * as yup from 'yup';
 
-import { AppTextInputs, Buttons } from "components/atoms";
-import { colors, size, typography } from "data/globals";
-import { setUser } from "src/reduxs/reducer/persistReducer";
-import { StackParamList } from "navigations/MainNavigator";
-import { createUser, UserRegister } from "services/firebase";
-import uploadImageAsync from "services/uploadImageAsync";
-import pickImage from "utils/imagePicker";
+import { AppTextInputs, Buttons } from '@/components/atoms';
+import { Colors, Spacing, Typography } from '@/config/constant';
+import { StackParamList } from '@/navigations/MainNavigator';
+import { createUser, UserRegister } from '@/services/firebase';
+import uploadImageAsync from '@/services/uploadImageAsync';
+import { setUser } from '@/stores/reducer/persistReducer';
+import pickImage from '@/utils/imagePicker';
 
 const schema = yup.object().shape({
-  phoneNumber: yup.string().required("Silahkan masukkan nomor telepon anda"),
-  streetAddress: yup.string().required("Silahkan masukkan alamat anda"),
-  city: yup.string().required("Silahkan masukkan kota anda tinggal"),
-  zipCode: yup.string().required("Silahkan masukkan kode pos anda"),
+  phoneNumber: yup.string().required('Silahkan masukkan nomor telepon anda'),
+  streetAddress: yup.string().required('Silahkan masukkan alamat anda'),
+  city: yup.string().required('Silahkan masukkan kota anda tinggal'),
+  zipCode: yup.string().required('Silahkan masukkan kode pos anda'),
 });
 
-type Props = NativeStackScreenProps<StackParamList, "UserDetail">;
+type Props = NativeStackScreenProps<StackParamList, 'UserDetail'>;
 
 export default function UserDetail({ navigation, route: { params } }: Props) {
   const dispatch = useDispatch();
@@ -50,7 +50,7 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
     zipCode: string;
   }) {
     if (userImage == null) {
-      return Alert.alert('', 'Silahkan menambahkan foto!')
+      return Alert.alert('', 'Silahkan menambahkan foto!');
     }
 
     setLoading(true);
@@ -61,7 +61,7 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
         const pathToUpload = `User/${registerUser.uid}/Profil`;
         const photo = await uploadImageAsync(userImage!, pathToUpload, `photo`);
 
-        let sendData = {
+        const sendData = {
           address: {
             city: data.city,
             streetAddress: data.streetAddress,
@@ -86,13 +86,13 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
             createdAt: sendData.createdAt.toDateString,
             lastLogin: sendData.lastLogin.toDateString,
             updatedAt: sendData.updateAt.toDateString,
-          })
+          }),
         );
       }
       reset();
-      navigation.navigate("SplashScreen");
+      navigation.navigate('SplashScreen');
     } catch (error: any) {
-      Alert.alert("Gagal", error.message);
+      Alert.alert('Gagal', error.message);
     } finally {
       setLoading(false);
     }
@@ -108,14 +108,14 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={async () => {
-              let pickedImage = await pickImage("galery");
+              const pickedImage = await pickImage('galery');
               if (pickedImage != null) {
-                setUserImage(pickedImage);
+                setUserImage(pickedImage.uri);
               }
             }}
-            style={{ alignSelf: "center", marginBottom: size.l }}
+            style={{ alignSelf: 'center', marginBottom: Spacing.l }}
           >
-            {!!userImage ? (
+            {userImage ? (
               <FastImage
                 source={{ uri: userImage }}
                 style={styles.image}
@@ -125,14 +125,14 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
               <View style={styles.image}>
                 <MaterialCommunityIcons
                   name="image-off-outline"
-                  color={colors.grey.dark}
+                  color={Colors.grey.dark}
                   size={20}
                 />
               </View>
             )}
           </TouchableOpacity>
 
-          {!!userImage ? (
+          {userImage ? (
             <TouchableOpacity
               style={styles.deleteImage}
               onPress={() => setUserImage(null)}
@@ -179,12 +179,12 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
           disabled={loading}
         />
       </ScrollView>
-      
-      <View style={{ paddingHorizontal: size.xl }}>
+
+      <View style={{ paddingHorizontal: Spacing.xl }}>
         <Buttons
           label="Daftar"
           onPress={handleSubmit(onSubmit)}
-          style={{ marginBottom: size.l }}
+          style={{ marginBottom: Spacing.l }}
           disabled={loading}
           loading={loading}
         />
@@ -196,34 +196,34 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: size.xl,
-    paddingVertical: size.l,
-    paddingTop: Bar?.currentHeight! + size.l,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.l,
+    paddingTop: (Bar?.currentHeight || 16) + Spacing.l,
   },
   image: {
     height: 72,
     width: 72,
-    borderRadius: size.s,
-    overflow: "hidden",
-    backgroundColor: colors.grey.light,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: size.l,
+    borderRadius: Spacing.s,
+    overflow: 'hidden',
+    backgroundColor: Colors.grey.light,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.l,
   },
   deleteImage: {
-    position: "absolute",
-    right: "40%",
+    position: 'absolute',
+    right: '40%',
     top: -12,
-    backgroundColor: colors.primaryContainer,
+    backgroundColor: Colors.primaryContainer,
     borderRadius: 50,
     padding: 4,
   },
   title: {
-    ...typography.heading2,
-    marginBottom: size.xl,
+    ...Typography.heading2,
+    marginBottom: Spacing.xl,
   },
   subtitle: {
-    ...typography.paragraph4,
-    color: colors.textSecondary,
+    ...Typography.paragraph4,
+    color: Colors.textSecondary,
   },
 });

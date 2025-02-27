@@ -1,4 +1,13 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import {
+  collection,
+  doc,
+  DocumentData,
+  getDoc,
+  onSnapshot,
+} from 'firebase/firestore';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -6,30 +15,25 @@ import {
   StyleSheet,
   Text,
   View,
-} from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  collection,
-  doc,
-  DocumentData,
-  getDoc,
-  onSnapshot,
-} from "firebase/firestore";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+} from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { CountdownTimer, Divider, PriceCounter } from "components/atoms";
-import { colors, size, typography } from "src/data/globals";
-import { StackParamList } from "src/navigations/MainNavigator";
+import { CountdownTimer, Divider, PriceCounter } from '@/components/atoms';
+import {
+  AuctionerCard,
+  BiddingModal,
+  ImageCarousel,
+} from '@/components/molecules';
+import { Colors, Spacing, Typography } from '@/config/constant';
+import { StackParamList } from '@/navigations/MainNavigator';
+import { addFavourite, database, removeFavourite } from '@/services/firebase';
 import {
   addRdxFavourite,
   removeRdxFavourite,
-} from "src/reduxs/reducer/persistReducer";
-import { addFavourite, database, removeFavourite } from "src/services/firebase";
-import serializeTime from "src/utils/serializeTime";
-import { AuctionerCard, BiddingModal, ImageCarousel } from "src/components/molecules";
+} from '@/stores/reducer/persistReducer';
+import serializeTime from '@/utils/serializeTime';
 
-type Props = NativeStackScreenProps<StackParamList, "DetailLelang">;
+type Props = NativeStackScreenProps<StackParamList, 'DetailLelang'>;
 
 export default function DetailAuction({
   navigation,
@@ -47,18 +51,18 @@ export default function DetailAuction({
     try {
       (async () => {
         const productData = await getDoc(
-          doc(collection(database, "products"), params.id)
+          doc(collection(database, 'products'), params.id),
         );
 
         if (productData.exists()) {
-          let fetchedItem = productData.data();
+          const fetchedItem = productData.data();
           fetchedItem.auctionEnd = serializeTime(fetchedItem.auctionEnd);
           fetchedItem.auctioner = await fetchUserData(fetchedItem.createdBy);
           setItem(fetchedItem);
         }
       })();
     } catch (error: any) {
-      Alert.alert("Kesalahan", error.message);
+      Alert.alert('Kesalahan', error.message);
     } finally {
       setLoading(false);
     }
@@ -66,10 +70,10 @@ export default function DetailAuction({
 
   async function fetchUserData(userId: string) {
     try {
-      const userData = await getDoc(doc(collection(database, "user"), userId));
+      const userData = await getDoc(doc(collection(database, 'user'), userId));
 
       if (userData.exists()) {
-        let fetchedUser = userData.data();
+        const fetchedUser = userData.data();
         fetchedUser.createdAt = serializeTime(fetchedUser.createdAt);
         fetchedUser.updateAt = serializeTime(fetchedUser.updateAt);
         fetchedUser.lastLogin = serializeTime(fetchedUser.lastLogin);
@@ -77,23 +81,23 @@ export default function DetailAuction({
       }
       return null;
     } catch (error: any) {
-      Alert.alert("Kesalahan", error.message);
+      Alert.alert('Kesalahan', error.message);
       return null;
     }
   }
 
   function subscribeData() {
     const unsubscribe = onSnapshot(
-      doc(database, "products", params.id),
+      doc(database, 'products', params.id),
       (docSnapshot) => {
         if (docSnapshot.exists()) {
           const data = docSnapshot.data();
           const currentBid = data?.currentBid;
           setItem((prevState) => ({ ...prevState, currentBid }));
         } else {
-          console.log("Error document not found");
+          console.log('Error document not found');
         }
-      }
+      },
     );
     return unsubscribe;
   }
@@ -119,7 +123,7 @@ export default function DetailAuction({
         await removeFavourite(userId, itemId);
       }
     } catch (error: any) {
-      Alert.alert("Kesalahan", error.message);
+      Alert.alert('Kesalahan', error.message);
     }
   }
 
@@ -127,8 +131,8 @@ export default function DetailAuction({
     navigation.setOptions({
       headerRight: () => (
         <MaterialCommunityIcons
-          name={isFavorite ? "heart" : "heart-outline"}
-          color={isFavorite ? colors.warning : colors.surfaceInverse}
+          name={isFavorite ? 'heart' : 'heart-outline'}
+          color={isFavorite ? Colors.warning : Colors.surfaceInverse}
           size={24}
           onPress={() => toggleFavourite(userData.uid, params.id)}
         />
@@ -163,7 +167,7 @@ export default function DetailAuction({
                 </View>
 
                 <View>
-                  <Text style={[styles.subLabel, { textAlign: "right" }]}>
+                  <Text style={[styles.subLabel, { textAlign: 'right' }]}>
                     Selesai Dalam
                   </Text>
                   <CountdownTimer date={item?.auctionEnd || null} />
@@ -175,8 +179,8 @@ export default function DetailAuction({
               <Text style={styles.sectionLabel}>Deskripsi</Text>
               <Text
                 style={[
-                  typography.paragraph3,
-                  { color: colors.textSecondary, marginBottom: size.l },
+                  Typography.paragraph3,
+                  { color: Colors.textSecondary, marginBottom: Spacing.l },
                 ]}
               >
                 {item?.description}
@@ -186,8 +190,8 @@ export default function DetailAuction({
 
               <Text style={styles.sectionLabel}>Pelelang</Text>
               <AuctionerCard
-                name={item?.auctioner?.displayName || "-"}
-                city={item?.auctioner?.address?.city || "-"}
+                name={item?.auctioner?.displayName || '-'}
+                city={item?.auctioner?.address?.city || '-'}
                 image={item?.auctioner?.photoURL}
               />
             </View>
@@ -209,23 +213,23 @@ export default function DetailAuction({
 const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
-    paddingVertical: size.l,
-    paddingHorizontal: size.xl,
+    paddingVertical: Spacing.l,
+    paddingHorizontal: Spacing.xl,
   },
   title: {
-    ...typography.heading2,
-    marginBottom: size.l,
+    ...Typography.heading2,
+    marginBottom: Spacing.l,
   },
   bidContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   subLabel: {
-    ...typography.paragraph4,
-    color: colors.textSecondary,
+    ...Typography.paragraph4,
+    color: Colors.textSecondary,
   },
   sectionLabel: {
-    ...typography.label2,
-    marginBottom: size.m,
+    ...Typography.label2,
+    marginBottom: Spacing.m,
   },
 });

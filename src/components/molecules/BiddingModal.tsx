@@ -1,11 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
-import { NumericFormat } from "react-number-format";
-import { colors, size, typography } from "src/data/globals";
-import Stepper from "../atoms/Stepper";
-import { Buttons } from "../atoms";
-import { useEffect, useState } from "react";
-import { addBid } from "src/services/firebase";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { NumericFormat } from 'react-number-format';
+import { useSelector } from 'react-redux';
+import { addBid } from 'src/services/firebase';
+
+import { Buttons } from '../atoms';
+import Stepper from '../atoms/Stepper';
+
+import { Colors, Spacing, Typography } from '@/config/constant';
 
 interface BiddingModalProps {
   auctionId: string;
@@ -20,7 +22,7 @@ const BiddingModal: React.FC<BiddingModalProps> = ({
   currentBid,
   startingBid,
   stepBid,
-  disabled
+  disabled,
 }) => {
   const userData = useSelector((state: any) => state.persist.userData);
   const [currentValue, setCurrentValue] = useState(0);
@@ -44,11 +46,11 @@ const BiddingModal: React.FC<BiddingModalProps> = ({
   }
   return (
     <View style={styles.modalContainer}>
-      <View style={{ flex: 1, marginRight: size.l }}>
+      <View style={{ flex: 1, marginRight: Spacing.l }}>
         <NumericFormat
           value={stepBid}
-          displayType={"text"}
-          prefix={"Rp "}
+          displayType={'text'}
+          prefix={'Rp '}
           thousandSeparator="."
           decimalSeparator=","
           renderText={(val) => (
@@ -82,17 +84,17 @@ const BiddingModal: React.FC<BiddingModalProps> = ({
 
 const styles = StyleSheet.create({
   modalContainer: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    paddingHorizontal: size.xl,
-    paddingVertical: size.l,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.l,
     borderTopWidth: 1,
-    borderColor: colors.grey.light,
+    borderColor: Colors.grey.light,
   },
   subtitle: {
-    ...typography.paragraph3,
-    marginBottom: size.m,
-    color: colors.textSecondary,
+    ...Typography.paragraph3,
+    marginBottom: Spacing.m,
+    color: Colors.textSecondary,
   },
 });
 

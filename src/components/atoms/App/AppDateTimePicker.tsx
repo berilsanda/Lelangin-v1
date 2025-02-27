@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import { Platform, TextInputProps, ViewStyle } from "react-native";
-import { Control, Controller } from "react-hook-form";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import moment from "moment";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
+import React, { useState } from 'react';
+import { Control, Controller } from 'react-hook-form';
+import { Platform, TextInputProps, ViewStyle } from 'react-native';
 
-import TextInputs from "../TextInputs";
+import TextInputs from '../TextInputs';
 
 interface DatePickerOptions {
   minimumDate?: Date;
   maximumDate?: Date;
-  mode?: "date" | "time" | "datetime";
+  mode?: 'date' | 'time' | 'datetime';
   is24Hour?: boolean;
-  display?: "default" | "spinner" | "calendar" | "clock";
+  display?: 'default' | 'spinner' | 'calendar' | 'clock';
 }
 
 interface AppDateTimePickerProps extends TextInputProps, DatePickerOptions {
@@ -21,7 +21,7 @@ interface AppDateTimePickerProps extends TextInputProps, DatePickerOptions {
   defaultValue?: string;
   value?: string;
   control: Control<any>;
-  type?: "date" | "time";
+  type?: 'date' | 'time';
   onSelectedDate?: (date: Date | undefined) => void;
   style?: ViewStyle;
 }
@@ -35,7 +35,7 @@ const AppDateTimePicker: React.FC<AppDateTimePickerProps> = ({
   onChangeText,
   onSelectedDate = () => {},
   control,
-  type = "date",
+  type = 'date',
   style,
   ...props
 }) => {
@@ -53,16 +53,16 @@ const AppDateTimePicker: React.FC<AppDateTimePickerProps> = ({
             placeholder={placeholder}
             value={
               !value
-                ? ""
-                : moment(value).format(type == "date" ? "DD/MM/YYYY" : "HH:mm")
+                ? ''
+                : moment(value).format(type == 'date' ? 'DD/MM/YYYY' : 'HH:mm')
             }
             onChangeText={onChange}
             readOnly
-            icon={type == "date" ? "calendar-outline" : "clock-outline"}
+            icon={type == 'date' ? 'calendar-outline' : 'clock-outline'}
             onPressIcon={() => setShow(true)}
             error={error?.message}
             style={style}
-            inputStyle={{ color: "black" }}
+            inputStyle={{ color: 'black' }}
           />
 
           {show && (
@@ -73,10 +73,9 @@ const AppDateTimePicker: React.FC<AppDateTimePickerProps> = ({
               display="default"
               {...props}
               onChange={(event, selectedValue) => {
-                
-                setShow(Platform.OS === "ios");
+                setShow(Platform.OS === 'ios');
 
-                if (event.type === "dismissed") {
+                if (event.type === 'dismissed') {
                   return;
                 }
 

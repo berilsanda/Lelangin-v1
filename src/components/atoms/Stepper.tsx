@@ -1,14 +1,15 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import React from 'react';
 import {
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
   ViewStyle,
-} from "react-native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { NumericFormat } from "react-number-format";
+} from 'react-native';
+import { NumericFormat } from 'react-number-format';
 
-import { colors, size, typography } from "src/data/globals";
+import { Colors, Spacing, Typography } from '@/config/constant';
 
 interface StepperProps {
   value: number;
@@ -16,7 +17,7 @@ interface StepperProps {
   onSubstract: () => void;
   cantSubstract: boolean;
   style?: ViewStyle;
-  type: "number" | "money";
+  type: 'number' | 'money';
   disabled?: boolean;
 }
 
@@ -26,7 +27,7 @@ const Stepper: React.FC<StepperProps> = ({
   onSubstract,
   cantSubstract,
   style,
-  type = "number",
+  type = 'number',
   disabled,
 }) => {
   return (
@@ -37,8 +38,8 @@ const Stepper: React.FC<StepperProps> = ({
           {
             backgroundColor:
               cantSubstract || disabled
-                ? colors.grey.light
-                : colors.primaryContainer,
+                ? Colors.grey.light
+                : Colors.primaryContainer,
           },
         ]}
         activeOpacity={0.8}
@@ -46,31 +47,31 @@ const Stepper: React.FC<StepperProps> = ({
         disabled={disabled}
       >
         <MaterialCommunityIcons
-          name={"minus"}
+          name={'minus'}
           size={20}
-          color={cantSubstract || disabled ? colors.grey.dark : colors.primary}
+          color={cantSubstract || disabled ? Colors.grey.dark : Colors.primary}
           onPress={disabled ? () => {} : onSubstract}
         />
       </TouchableOpacity>
-      {type == "money" ? (
+      {type == 'money' ? (
         <NumericFormat
           value={value}
-          displayType={"text"}
-          prefix={"Rp "}
+          displayType={'text'}
+          prefix={'Rp '}
           thousandSeparator="."
           decimalSeparator=","
-          renderText={(val) => <Text style={typography.paragraph3}>{val}</Text>}
+          renderText={(val) => <Text style={Typography.paragraph3}>{val}</Text>}
         />
       ) : (
-        <Text style={typography.paragraph3}>{value}</Text>
+        <Text style={Typography.paragraph3}>{value}</Text>
       )}
       <TouchableOpacity
         style={[
           styles.btnContainer,
           {
             backgroundColor: disabled
-              ? colors.grey.light
-              : colors.primaryContainer,
+              ? Colors.grey.light
+              : Colors.primaryContainer,
           },
         ]}
         activeOpacity={0.8}
@@ -78,9 +79,9 @@ const Stepper: React.FC<StepperProps> = ({
         disabled={disabled}
       >
         <MaterialCommunityIcons
-          name={"plus"}
+          name={'plus'}
           size={20}
-          color={disabled ? colors.grey.dark : colors.primary}
+          color={disabled ? Colors.grey.dark : Colors.primary}
           onPress={disabled ? () => {} : onAdd}
         />
       </TouchableOpacity>
@@ -90,16 +91,16 @@ const Stepper: React.FC<StepperProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderRadius: size.s,
-    overflow: "hidden",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: Spacing.s,
+    overflow: 'hidden',
     borderWidth: 1,
-    borderColor: colors.primaryContainer,
+    borderColor: Colors.primaryContainer,
   },
   btnContainer: {
-    padding: size.m,
+    padding: Spacing.m,
   },
 });
 

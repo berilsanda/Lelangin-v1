@@ -1,11 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   userData: {
-    uid: "",
-    email: "",
+    uid: '',
+    email: '',
     emailVerified: false,
-    displayName: "",
-    photoURL: "",
+    displayName: '',
+    photoURL: '',
     address: {
       city: '',
       streetAddress: '',
@@ -13,18 +13,18 @@ const initialState = {
     },
     createdAt: '',
     favorites: [] as string[],
-    lastLogin:'',
+    lastLogin: '',
     phoneNumber: '',
     updateAt: '',
   },
 };
 
 export const persistSlice = createSlice({
-  name: "persist",
+  name: 'persist',
   initialState,
   reducers: {
     setUser: (state, action) => {
-      let newUserData = { ...state.userData, ...action.payload };
+      const newUserData = { ...state.userData, ...action.payload };
       state.userData = newUserData;
     },
     resetUser: (state) => {
@@ -37,12 +37,13 @@ export const persistSlice = createSlice({
     },
     removeRdxFavourite: (state, action) => {
       state.userData.favorites = state.userData.favorites.filter(
-        (fav) => fav !== action.payload
+        (fav) => fav !== action.payload,
       );
     },
   },
 });
 
-export const { setUser, resetUser, addRdxFavourite, removeRdxFavourite } = persistSlice.actions;
+export const { setUser, resetUser, addRdxFavourite, removeRdxFavourite } =
+  persistSlice.actions;
 
 export default persistSlice.reducer;

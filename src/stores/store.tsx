@@ -1,5 +1,5 @@
-import { configureStore } from "@reduxjs/toolkit";
-import storage from "@react-native-async-storage/async-storage";
+import storage from '@react-native-async-storage/async-storage';
+import { configureStore } from '@reduxjs/toolkit';
 import {
   persistStore,
   persistReducer,
@@ -9,12 +9,13 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from "redux-persist";
-import tempReducer from "./reducer/tempReducer";
-import localReducer from "./reducer/persistReducer";
+} from 'redux-persist';
+
+import localReducer from './reducer/persistReducer';
+import tempReducer from './reducer/tempReducer';
 
 const persistConfig = {
-  key: "root",
+  key: 'root',
   storage,
   version: 1,
 };
@@ -36,5 +37,7 @@ const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export default store;

@@ -1,4 +1,7 @@
-import React from "react";
+import { yupResolver } from '@hookform/resolvers/yup';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import {
   SafeAreaView,
   ScrollView,
@@ -6,15 +9,12 @@ import {
   Text,
   StatusBar as Bar,
   View,
-} from "react-native";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+} from 'react-native';
+import { StackParamList } from 'src/navigations/MainNavigator';
+import * as yup from 'yup';
 
-import { AppTextInputs, Buttons } from "components/atoms";
-import { colors, size, typography } from "data/globals";
-import { StackParamList } from "src/navigations/MainNavigator";
+import { AppTextInputs, Buttons } from '@/components/atoms';
+import { Colors, Spacing, Typography } from '@/config/constant';
 
 export interface UserRegisterData {
   displayName: string;
@@ -24,26 +24,26 @@ export interface UserRegisterData {
 }
 
 const schema = yup.object().shape({
-  displayName: yup.string().required("Silahkan masukkan nama lengkap anda"),
+  displayName: yup.string().required('Silahkan masukkan nama lengkap anda'),
   email: yup
     .string()
-    .email("Format email salah")
-    .required("Silahkan masukkan email"),
+    .email('Format email salah')
+    .required('Silahkan masukkan email'),
   password: yup
     .string()
-    .min(8, "Password minimal 8 karakter")
-    .required("Silahkan masukkan password"),
+    .min(8, 'Password minimal 8 karakter')
+    .required('Silahkan masukkan password'),
   cpassword: yup
     .string()
-    .min(8, "Password minimal 8 karakter")
-    .required("Silahkan masukkan konfirmasi password")
+    .min(8, 'Password minimal 8 karakter')
+    .required('Silahkan masukkan konfirmasi password')
     .oneOf(
-      [yup.ref("password"), ""],
-      "Konfirmasi Password harus sama dengan Password"
+      [yup.ref('password'), ''],
+      'Konfirmasi Password harus sama dengan Password',
     ),
 });
 
-type Props = NativeStackScreenProps<StackParamList, "Register">;
+type Props = NativeStackScreenProps<StackParamList, 'Register'>;
 
 export default function Register({ navigation }: Props) {
   const { control, handleSubmit, reset } = useForm({
@@ -51,7 +51,7 @@ export default function Register({ navigation }: Props) {
   });
 
   function onSubmit(data: UserRegisterData) {
-    navigation.navigate("UserDetail", data);
+    navigation.navigate('UserDetail', data);
     reset();
   }
 
@@ -60,7 +60,7 @@ export default function Register({ navigation }: Props) {
       <ScrollView style={styles.container}>
         <Text style={styles.subtitle}>Langkah 1 dari 2</Text>
         <Text style={styles.title}>Data Akun</Text>
-        
+
         <AppTextInputs
           name="displayName"
           label="Nama Lengkap"
@@ -89,19 +89,13 @@ export default function Register({ navigation }: Props) {
         />
       </ScrollView>
 
-      <View style={{ paddingHorizontal: size.xl }}>
-        <Text
-          style={{
-            ...typography.paragraph3,
-            textAlign: "center",
-            marginBottom: size.l,
-          }}
-        >
-          Sudah punya akun?{" "}
+      <View style={{ paddingHorizontal: Spacing.xl }}>
+        <Text style={styles.labelInfo}>
+          Sudah punya akun?{' '}
           <Text
-            style={{ ...typography.label3, color: colors.primary }}
+            style={[Typography.label3, { color: Colors.primary }]}
             suppressHighlighting
-            onPress={() => navigation.navigate("Login")}
+            onPress={() => navigation.navigate('Login')}
           >
             Masuk disini.
           </Text>
@@ -110,7 +104,7 @@ export default function Register({ navigation }: Props) {
         <Buttons
           label="Lanjut"
           onPress={handleSubmit(onSubmit)}
-          style={{ marginBottom: size.l }}
+          style={{ marginBottom: Spacing.l }}
         />
       </View>
     </SafeAreaView>
@@ -120,16 +114,21 @@ export default function Register({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: size.xl,
-    paddingVertical: size.l,
-    paddingTop: Bar?.currentHeight! + size.l,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.l,
+    paddingTop: (Bar?.currentHeight || 16) + Spacing.l,
   },
   title: {
-    ...typography.heading2,
-    marginBottom: size.xl,
+    ...Typography.heading2,
+    marginBottom: Spacing.xl,
   },
   subtitle: {
-    ...typography.paragraph4,
-    color: colors.textSecondary,
+    ...Typography.paragraph4,
+    color: Colors.textSecondary,
+  },
+  labelInfo: {
+    ...Typography.label3,
+    textAlign: 'center',
+    marginBottom: Spacing.l,
   },
 });

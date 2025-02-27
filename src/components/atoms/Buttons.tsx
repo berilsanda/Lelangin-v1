@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -6,9 +6,9 @@ import {
   TextStyle,
   TouchableOpacity,
   ViewStyle,
-} from "react-native";
+} from 'react-native';
 
-import { colors, size, typography } from "data/globals";
+import { Colors, Spacing, Typography } from '@/config/constant';
 
 interface ButtonsProps {
   label: string;
@@ -18,19 +18,19 @@ interface ButtonsProps {
   style?: ViewStyle;
   labelStyle?: TextStyle;
   disabled?: boolean;
-  mode?: "contained" | "outlined";
+  mode?: 'contained' | 'outlined';
   loading?: boolean;
 }
 
 const Buttons: React.FC<ButtonsProps> = ({
   label,
   onPress,
-  color = colors.primary,
-  labelColor = colors.surface,
+  color = Colors.primary,
+  labelColor = Colors.surface,
   style,
   labelStyle,
   disabled = false,
-  mode = "contained",
+  mode = 'contained',
   loading = false,
 }) => {
   return (
@@ -40,19 +40,19 @@ const Buttons: React.FC<ButtonsProps> = ({
       disabled={disabled}
       style={[
         styles.btnStyle,
-        mode == "contained" ? styles.btnContained : styles.btnOutlined,
-        mode == "contained"
-          ? { backgroundColor: disabled ? colors.grey.light : color }
-          : { borderColor: disabled ? colors.grey.light : color },
+        mode == 'contained' ? styles.btnContained : styles.btnOutlined,
+        mode == 'contained'
+          ? { backgroundColor: disabled ? Colors.grey.light : color }
+          : { borderColor: disabled ? Colors.grey.light : color },
         style,
       ]}
     >
       {loading ? (
         <ActivityIndicator
           color={
-            mode == "contained"
+            mode == 'contained'
               ? disabled
-                ? colors.grey.dark
+                ? Colors.grey.dark
                 : labelColor
               : color
           }
@@ -61,11 +61,11 @@ const Buttons: React.FC<ButtonsProps> = ({
       ) : null}
       <Text
         style={[
-          typography.label3,
+          Typography.label3,
           styles.labelStyle,
-          mode == "contained"
-            ? { color: disabled ? colors.grey.dark : labelColor }
-            : { color: disabled ? colors.grey.dark : color },
+          mode == 'contained'
+            ? { color: disabled ? Colors.grey.dark : labelColor }
+            : { color: disabled ? Colors.grey.dark : color },
           labelStyle,
         ]}
       >
@@ -77,20 +77,20 @@ const Buttons: React.FC<ButtonsProps> = ({
 
 const styles = StyleSheet.create({
   btnStyle: {
-    height: size.compHeight,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: size.s,
-    paddingVertical: size.s,
-    paddingHorizontal: size.l,
-    flexDirection: "row",
+    height: Spacing.compHeight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: Spacing.s,
+    paddingVertical: Spacing.s,
+    paddingHorizontal: Spacing.l,
+    flexDirection: 'row',
   },
   btnContained: {},
   btnOutlined: {
     borderWidth: 1,
   },
   labelStyle: {
-    textTransform: "capitalize",
+    textTransform: 'capitalize',
   },
 });
 

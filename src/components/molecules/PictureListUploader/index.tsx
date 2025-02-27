@@ -1,3 +1,3 @@
-import PictureListUploader from "./PictureListUploader";
+import PictureListUploader from './PictureListUploader';
 
 export default PictureListUploader;
