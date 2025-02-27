@@ -3,21 +3,21 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { Colors, Spacing, Typography } from '@/config/constant';
 
-interface RadioButtonsProps {
+interface RadioButtonsProps<T,> {
   label: string;
   index: number;
   isSelected: boolean;
-  setValue: (value: any) => void;
-  value: any;
+  setValue: (value: T) => void;
+  value: T;
 }
 
-const RadioButtons: React.FC<RadioButtonsProps> = ({
+const RadioButtons = <T,>({
   label,
   index,
   isSelected,
   setValue,
   value,
-}) => {
+}: RadioButtonsProps<T>) => {
   return (
     <TouchableOpacity
       key={index}
