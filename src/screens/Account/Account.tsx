@@ -17,12 +17,12 @@ import FastImage from 'react-native-fast-image';
 
 import { AppModals, Buttons, TextInputs } from '@/components/atoms';
 import { Colors, Spacing, Typography } from '@/config/constant';
-import { AccountStackParamList } from '@/navigations/AccountNavigator';
 import { auth, updateUser } from '@/services/firebase';
 import uploadImageAsync from '@/services/uploadImageAsync';
 import { resetUser, setUser } from '@/stores/reducer/persistReducer';
 import pickImage from '@/utils/imagePicker';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { AccountStackParamList } from '@/types/navigation/AccountNavigationType';
 
 type Props = NativeStackScreenProps<AccountStackParamList, 'Account'>;
 

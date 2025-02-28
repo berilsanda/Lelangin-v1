@@ -10,11 +10,11 @@ import {
   StatusBar as Bar,
   View,
 } from 'react-native';
-import { StackParamList } from 'src/navigations/MainNavigator';
 import * as yup from 'yup';
 
 import { AppTextInputs, Buttons } from '@/components/atoms';
 import { Colors, Spacing, Typography } from '@/config/constant';
+import { StackParamList } from '@/types/navigation/MainNavigationType';
 
 export interface UserRegisterData {
   displayName: string;

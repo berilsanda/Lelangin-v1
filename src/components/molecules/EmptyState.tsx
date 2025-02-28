@@ -17,15 +17,7 @@ export default function EmptyState({ title, subtitle }: EmptyStateProps) {
         resizeMode="center"
       />
       <Text style={Typography.label2}>{title}</Text>
-      <Text
-        style={{
-          ...Typography.paragraph3,
-          color: Colors.textSecondary,
-          textAlign: 'center',
-        }}
-      >
-        {subtitle}
-      </Text>
+      <Text style={styles.subtitle}>{subtitle}</Text>
     </View>
   );
 }
@@ -42,5 +34,10 @@ const styles = StyleSheet.create({
     height: 200,
     width: 200,
     resizeMode: 'center',
+  },
+  subtitle: {
+    ...Typography.paragraph3,
+    color: Colors.textSecondary,
+    textAlign: 'center',
   },
 });

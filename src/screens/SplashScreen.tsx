@@ -4,7 +4,6 @@ import { onAuthStateChanged } from 'firebase/auth';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { View, Text, Image, Dimensions, StyleSheet } from 'react-native';
-import { StackParamList } from 'src/navigations/MainNavigator';
 import { auth, getUser } from 'src/services/firebase';
 import serializeTime from 'src/utils/serializeTime';
 
@@ -12,6 +11,7 @@ import { Colors, Typography } from '@/config/constant';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { setUser } from '@/stores/reducer/persistReducer';
 import { DocumentData } from 'firebase/firestore';
+import { StackParamList } from '@/types/navigation/MainNavigationType';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -21,7 +21,7 @@ type CurrentUser = DocumentData & {
   uid: string;
   email: string | null;
   emailVerified: boolean;
-}
+};
 export default function SplashScreen({ navigation }: Props) {
   const dispatch = useAppDispatch();
   const userData = useAppSelector((state) => state.persist.userData);
@@ -61,7 +61,7 @@ export default function SplashScreen({ navigation }: Props) {
   return (
     <View style={{ flex: 1 }}>
       <Image
-        style={{ height: height, width: width }}
+        style={styles.image}
         resizeMode="cover"
         source={require('assets/splash.png')}
       />
@@ -80,5 +80,9 @@ const styles = StyleSheet.create({
     zIndex: 99,
     color: Colors.textSecondary,
     ...Typography.paragraph3,
+  },
+  image: {
+    height: height,
+    width: width,
   },
 });

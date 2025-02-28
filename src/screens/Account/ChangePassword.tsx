@@ -12,8 +12,8 @@ import * as yup from 'yup';
 
 import { AppTextInputs, Buttons } from '@/components/atoms';
 import { Colors, Spacing } from '@/config/constant';
-import { AccountStackParamList } from '@/navigations/AccountNavigator';
 import { auth } from '@/services/firebase';
+import { AccountStackParamList } from '@/types/navigation/AccountNavigationType';
 
 type Props = NativeStackScreenProps<AccountStackParamList, 'ChangePassword'>;
 

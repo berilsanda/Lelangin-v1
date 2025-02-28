@@ -18,12 +18,12 @@ import * as yup from 'yup';
 
 import { AppTextInputs, Buttons } from '@/components/atoms';
 import { Colors, Spacing, Typography } from '@/config/constant';
-import { StackParamList } from '@/navigations/MainNavigator';
 import { CreateUser, createUser, UserRegister } from '@/services/firebase';
 import uploadImageAsync from '@/services/uploadImageAsync';
 import { setUser } from '@/stores/reducer/persistReducer';
 import pickImage from '@/utils/imagePicker';
 import { useAppDispatch } from '@/hooks/useRedux';
+import { StackParamList } from '@/types/navigation/MainNavigationType';
 
 const schema = yup.object().shape({
   phoneNumber: yup.string().required('Silahkan masukkan nomor telepon anda'),

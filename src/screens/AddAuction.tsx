@@ -15,7 +15,6 @@ import {
   AppDateTimePicker,
 } from 'src/components/atoms';
 import { PictureListUploader, RadioGroups } from 'src/components/molecules';
-import { StackParamList } from 'src/navigations/MainNavigator';
 import { AddProduct, addProducts } from 'src/services/firebase';
 import uploadImageAsync from 'src/services/uploadImageAsync';
 import combineDateTime from 'src/utils/combineDateTime';
@@ -24,6 +23,7 @@ import * as yup from 'yup';
 import { Colors, Spacing, Typography } from '@/config/constant';
 import { toggleHomeUpdate } from '@/stores/reducer/tempReducer';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { StackParamList } from '@/types/navigation/MainNavigationType';
 
 type FormData = {
   pictureList: Source[];
@@ -148,6 +148,7 @@ export default function AddAuction({ navigation }: Props) {
       setLoading(false);
     }
   }
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView
@@ -201,9 +202,7 @@ export default function AddAuction({ navigation }: Props) {
                 setValue={onChange}
                 style={{ flexDirection: 'row' }}
               />
-              {error ? (
-                <Text style={styles.errorText}>{error.message}</Text>
-              ) : null}
+              {error && <Text style={styles.errorText}>{error.message}</Text>}
             </>
           )}
         />
