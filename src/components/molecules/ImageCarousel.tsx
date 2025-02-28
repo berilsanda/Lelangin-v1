@@ -11,14 +11,14 @@ import {
   ViewProps,
   ViewStyle,
 } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import FastImage, { Source } from 'react-native-fast-image';
 
 import { ImageLightbox, Skeleton } from '../atoms';
 
 import { Colors, Spacing } from '@/config/constant';
 
 interface ImageCarouselProps extends ViewProps {
-  images: string[];
+  images: Source[];
   style?: StyleProp<ViewStyle>;
 }
 
@@ -53,12 +53,12 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
             decelerationRate={'fast'}
             onMomentumScrollEnd={(e) => onScrollCarousel(e)}
           >
-            {images?.map((image: string) => {
+            {images?.map((image: Source, i) => {
               return (
                 <ImageLightbox
-                  key={image}
+                  key={i}
                   style={styles.image}
-                  source={{ uri: image }}
+                  source={image}
                   resizeMode={FastImage.resizeMode.cover}
                 />
               );
