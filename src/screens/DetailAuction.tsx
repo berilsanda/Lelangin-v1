@@ -1,16 +1,7 @@
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import {
-  collection,
-  doc,
-  DocumentData,
-  getDoc,
-  onSnapshot,
-} from 'firebase/firestore';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -24,14 +15,9 @@ import {
   ImageCarousel,
 } from '@/components/molecules';
 import { Colors, Spacing, Typography } from '@/config/constant';
-import { StackParamList } from '@/navigations/MainNavigator';
-import { addFavourite, database, removeFavourite } from '@/services/firebase';
-import {
-  addRdxFavourite,
-  removeRdxFavourite,
-} from '@/stores/reducer/persistReducer';
-import serializeTime from '@/utils/serializeTime';
-import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { StackParamList } from '@/types/navigation/MainNavigationType';
+import useFetchProduct from '@/hooks/useFetchProduct';
+import FavouriteButton from '@/components/atoms/FavouriteButton';
 
 type Props = NativeStackScreenProps<StackParamList, 'DetailLelang'>;
 
@@ -39,106 +25,13 @@ export default function DetailAuction({
   navigation,
   route: { params },
 }: Props) {
-  const [item, setItem] = useState<DocumentData>();
-  const [loading, setLoading] = useState(true);
-
-  const dispatch = useAppDispatch();
-  const userData = useAppSelector((state) => state.persist.userData);
-  const isFavorite: boolean = userData.favorites.includes(params.id);
-
-  async function fetchData() {
-    setLoading(true);
-    try {
-      (async () => {
-        const productData = await getDoc(
-          doc(collection(database, 'products'), params.id),
-        );
-
-        if (productData.exists()) {
-          const fetchedItem = productData.data();
-          fetchedItem.auctionEnd = serializeTime(fetchedItem.auctionEnd);
-          fetchedItem.auctioner = await fetchUserData(fetchedItem.createdBy);
-          setItem(fetchedItem);
-        }
-      })();
-    } catch (error: any) {
-      Alert.alert('Kesalahan', error.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function fetchUserData(userId: string) {
-    try {
-      const userData = await getDoc(doc(collection(database, 'user'), userId));
-
-      if (userData.exists()) {
-        const fetchedUser = userData.data();
-        fetchedUser.createdAt = serializeTime(fetchedUser.createdAt);
-        fetchedUser.updateAt = serializeTime(fetchedUser.updateAt);
-        fetchedUser.lastLogin = serializeTime(fetchedUser.lastLogin);
-        return fetchedUser;
-      }
-      return null;
-    } catch (error: any) {
-      Alert.alert('Kesalahan', error.message);
-      return null;
-    }
-  }
-
-  function subscribeData() {
-    const unsubscribe = onSnapshot(
-      doc(database, 'products', params.id),
-      (docSnapshot) => {
-        if (docSnapshot.exists()) {
-          const data = docSnapshot.data();
-          const currentBid = data?.currentBid;
-          setItem((prevState) => ({ ...prevState, currentBid }));
-        } else {
-          console.log('Error document not found');
-        }
-      },
-    );
-    return unsubscribe;
-  }
-
-  useEffect(() => {
-    fetchData();
-
-    const unsubscribe = subscribeData();
-
-    return () => {
-      unsubscribe();
-    };
-  }, [params.id]);
-
-  async function toggleFavourite(userId: string, itemId: string) {
-    try {
-      if (!isFavorite) {
-        dispatch(addRdxFavourite(itemId));
-        await addFavourite(userId, itemId);
-      } else {
-        dispatch(removeRdxFavourite(itemId));
-
-        await removeFavourite(userId, itemId);
-      }
-    } catch (error: any) {
-      Alert.alert('Kesalahan', error.message);
-    }
-  }
+  const { item, loading } = useFetchProduct(params.id);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <MaterialCommunityIcons
-          name={isFavorite ? 'heart' : 'heart-outline'}
-          color={isFavorite ? Colors.warning : Colors.surfaceInverse}
-          size={24}
-          onPress={() => toggleFavourite(userData.uid, params.id)}
-        />
-      ),
+      headerRight: () => <FavouriteButton productId={params.id} />,
     });
-  }, [navigation, isFavorite]);
+  }, [navigation]);
 
   return (
     <View style={{ flex: 1 }}>
