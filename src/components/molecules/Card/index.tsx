@@ -1,4 +1,4 @@
 import AuctionerCard from './AuctionerCard';
-import ItemCard from './ItemCard';
+import ItemCard from './ProductCard';
 
 export { AuctionerCard, ItemCard };

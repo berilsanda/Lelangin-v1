@@ -10,19 +10,19 @@ import {
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { NumericFormat } from 'react-number-format';
-import { StackParamList } from 'src/navigations/MainNavigator';
-import { ProductType } from 'src/types/productModel';
 
 import { Colors, Spacing, Typography } from '@/config/constant';
+import { StackParamList } from '@/types/navigation/MainNavigationType';
+import { ProductType } from '@/types/productModel';
 
 const { width } = Dimensions.get('window');
 const ITEM_WIDTH = (width - 2 * Spacing.xl - Spacing.l) / 2;
 
-interface ItemCardProps {
+interface ProductCardProps {
   item: ProductType;
 }
 
-const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   return (
@@ -31,7 +31,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
       onPress={() => navigation.navigate('DetailLelang', { id: item.id })}
     >
       <FastImage
-        source={{ uri: item.images[0] }}
+        source={item.images[0]}
         style={styles.image}
         resizeMode="cover"
       />
@@ -64,8 +64,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    marginRight: Spacing.l,
-    marginBottom: Spacing.l,
     width: ITEM_WIDTH,
     backgroundColor: Colors.surface,
     borderRadius: Spacing.s,
@@ -92,4 +90,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemCard;
+export default ProductCard;

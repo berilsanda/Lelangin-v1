@@ -1,3 +1,5 @@
+import { Source } from "react-native-fast-image";
+
 export type ProductType = {
   auctionEnd: string | null;
   bidder: number;
@@ -7,7 +9,7 @@ export type ProductType = {
   currentBid: number;
   description: string;
   id: string;
-  images: string[];
+  images: Source[];
   startingBid: number;
   status: string;
   stepBid: number;
