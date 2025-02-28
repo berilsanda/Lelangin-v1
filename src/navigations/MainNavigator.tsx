@@ -8,18 +8,8 @@ import SplashScreen from 'src/screens/SplashScreen';
 import HomeNavigator from './HomeNavigator';
 
 import Login from '@/screens/Login';
-import Register, { UserRegisterData } from '@/screens/Register/Register';
-
-export type StackParamList = {
-  HomeNav: undefined;
-  Login: undefined;
-  Register: undefined;
-  UserDetail: UserRegisterData;
-  SplashScreen: undefined;
-  TambahLelang: undefined;
-  DetailLelang: { id: string };
-  Favourites: undefined;
-};
+import Register from '@/screens/Register/Register';
+import { StackParamList } from '@/types/navigation/MainNavigationType';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 

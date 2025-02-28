@@ -1,11 +1,7 @@
+import { AccountStackParamList } from '@/types/navigation/AccountNavigationType';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Account from 'src/screens/Account/Account';
 import ChangePassword from 'src/screens/Account/ChangePassword';
-
-export type AccountStackParamList = {
-  Account: undefined;
-  ChangePassword: undefined;
-};
 
 const Stack = createNativeStackNavigator<AccountStackParamList>();
 

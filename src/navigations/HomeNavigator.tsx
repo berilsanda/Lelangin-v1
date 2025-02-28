@@ -8,17 +8,11 @@ import {
   useNavigation,
 } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Home from 'src/screens/Home';
 
 import AccountNavigator from './AccountNavigator';
-import { StackParamList } from './MainNavigator';
-
-export type TabParamList = {
-  Home: undefined;
-  Transaksi: undefined;
-  AccountNav: undefined;
-  TambahLelang: undefined;
-};
+import { TabParamList } from '@/types/navigation/HomeNavigationType';
+import { StackParamList } from '@/types/navigation/MainNavigationType';
+import Home from '@/screens/Home';
 
 type NavigationProps = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList>,

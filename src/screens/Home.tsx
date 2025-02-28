@@ -1,5 +1,4 @@
 import Feather from '@expo/vector-icons/Feather';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   collection,
   endAt,
@@ -25,17 +24,15 @@ import { Skeleton, TextInputs } from '@/components/atoms';
 import { EmptyState, ItemCard } from '@/components/molecules';
 import { Spacing, Typography } from '@/config/constant';
 import { useAppSelector } from '@/hooks/useRedux';
-import { StackParamList } from '@/navigations/MainNavigator';
 import { database } from '@/services/firebase';
 import { Bid } from '@/types/bidModel';
 import { ProductType } from '@/types/productModel';
 import serializeTime from '@/utils/serializeTime';
-
-type Props = NativeStackScreenProps<StackParamList, 'HomeNav'>;
+import { navigate } from '@/utils/rootNavigation';
 
 const SKELETON_WIDTH =
   (Dimensions.get('window').width - 2 * Spacing.xl - Spacing.l) / 2;
-export default function Home({ navigation }: Props) {
+export default function Home() {
   const shouldHomeUpdate = useAppSelector(
     (state) => state.temp.homeUpdateState,
   );
@@ -163,7 +160,7 @@ export default function Home({ navigation }: Props) {
           name="heart"
           size={24}
           style={{ marginRight: 16 }}
-          onPress={() => navigation.navigate('Favourites')}
+          onPress={() => navigate('Favourites')}
         />
         <Feather name="bell" size={24} />
       </View>
