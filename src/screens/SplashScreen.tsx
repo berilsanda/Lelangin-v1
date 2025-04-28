@@ -1,61 +1,75 @@
 import { APP_VER } from '@env';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { onAuthStateChanged } from 'firebase/auth';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { View, Text, Image, Dimensions, StyleSheet } from 'react-native';
-import { auth, getUser } from 'src/services/firebase';
-import serializeTime from 'src/utils/serializeTime';
 
 import { Colors, Typography } from '@/config/constant';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import { setUser } from '@/stores/reducer/persistReducer';
-import { DocumentData } from 'firebase/firestore';
+import {
+  INITIAL_USER,
+  setSession,
+  setUser,
+} from '@/stores/reducer/persistReducer';
 import { StackParamList } from '@/types/navigation/MainNavigationType';
+import supabase from '@/services/supabase';
+import { User } from '@/types/userModel';
 
 const { width, height } = Dimensions.get('screen');
 
 type Props = NativeStackScreenProps<StackParamList, 'SplashScreen'>;
-
-type CurrentUser = DocumentData & {
-  uid: string;
-  email: string | null;
-  emailVerified: boolean;
-};
 export default function SplashScreen({ navigation }: Props) {
   const dispatch = useAppDispatch();
   const userData = useAppSelector((state) => state.persist.userData);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userFirestoreData = await getUser(user.uid);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      dispatch(setSession(session));
+    });
 
-        const currentUser: CurrentUser = {
-          ...userFirestoreData,
-          uid: user.uid,
-          email: user.email,
-          emailVerified: user.emailVerified,
-        };
+    supabase.auth.onAuthStateChange((_event, session) => {
+      dispatch(setSession(session));
 
-        currentUser.createdAt = serializeTime(
-          currentUser.createdAt,
-        )?.toString();
-        currentUser.lastLogin = serializeTime(
-          currentUser.lastLogin,
-        )?.toString();
-        currentUser.updateAt = serializeTime(currentUser.updateAt)?.toString();
+      if (session) {
+        setTimeout(async () => {
+          try {
+            const { data } = await supabase
+              .from('users')
+              .select()
+              .eq('uid', session.user.id);
 
-        if (!_.isEqual(userData, currentUser)) {
-          dispatch(setUser(currentUser));
-        }
+            if (!data || data.length === 0) {
+              throw new Error('User data not found!');
+            }
+
+            const currentUser: Omit<
+              User,
+              'created_at' | 'last_login' | 'updated_at'
+            > & {
+              created_at: string;
+              last_login: string;
+              updated_at: string;
+            } = data[0];
+
+            currentUser.created_at = currentUser.created_at.toString();
+            currentUser.last_login = currentUser.last_login.toString();
+            currentUser.updated_at = currentUser.updated_at.toString();
+
+            if (!_.isEqual(userData, currentUser)) {
+              dispatch(setUser(currentUser));
+            }
+          } catch (error: any) {
+            navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+            throw new Error(error.message);
+          }
+        }, 0);
+
         return navigation.replace('HomeNav');
       } else {
+        dispatch(setUser(INITIAL_USER));
         return navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
       }
     });
-
-    return () => unsubscribe();
   }, []);
 
   return (

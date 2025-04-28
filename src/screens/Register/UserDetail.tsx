@@ -18,12 +18,12 @@ import * as yup from 'yup';
 
 import { AppTextInputs, Buttons } from '@/components/atoms';
 import { Colors, Spacing, Typography } from '@/config/constant';
-import { CreateUser, createUser, UserRegister } from '@/services/firebase';
-import uploadImageAsync from '@/services/uploadImageAsync';
 import { setUser } from '@/stores/reducer/persistReducer';
 import pickImage from '@/utils/imagePicker';
 import { useAppDispatch } from '@/hooks/useRedux';
 import { StackParamList } from '@/types/navigation/MainNavigationType';
+import { createUser, UploadUserImage, UserRegister } from '@/services/supabase';
+import { User } from '@/types/userModel';
 
 const schema = yup.object().shape({
   phoneNumber: yup.string().required('Silahkan masukkan nomor telepon anda'),
@@ -37,7 +37,13 @@ type Props = NativeStackScreenProps<StackParamList, 'UserDetail'>;
 export default function UserDetail({ navigation, route: { params } }: Props) {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
-  const [userImage, setUserImage] = useState<string | null>(null);
+  const [userImage, setUserImage] = useState<{
+    uri: string;
+    base64?: string | null;
+  }>({
+    uri: '',
+    base64: null,
+  });
 
   const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(schema),
@@ -58,24 +64,22 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
       const registerUser = await UserRegister(params.email, params.password);
 
       if (registerUser) {
-        const pathToUpload = `User/${registerUser.uid}/Profil`;
-        const photo = await uploadImageAsync(userImage!, pathToUpload, `photo`);
+        const pathToUpload = `${registerUser.user?.id}/user_image${userImage.uri.slice(userImage.uri.length - 4)}`;
+        const photo = await UploadUserImage(userImage.base64!, pathToUpload);
 
-        const sendData: CreateUser = {
-          address: {
-            city: data.city,
-            streetAddress: data.streetAddress,
-            zipCode: data.zipCode,
-          },
-          createdAt: new Date(),
-          displayName: params.displayName,
+        const sendData: User = {
+          address_city: data.city,
+          address_street_address: data.streetAddress,
+          address_zip_code: data.zipCode,
+          created_at: new Date(),
+          display_name: params.displayName,
           email: params.email,
           favorites: [],
-          lastLogin: new Date(),
-          phoneNumber: parseInt(data.phoneNumber),
-          photoURL: photo,
-          uid: registerUser.uid,
-          updateAt: new Date(),
+          last_login: new Date(),
+          phone_number: parseInt(data.phoneNumber),
+          photo_url: photo,
+          uid: registerUser.user!.id,
+          updated_at: new Date(),
         };
 
         await createUser(sendData);
@@ -83,9 +87,9 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
         dispatch(
           setUser({
             ...sendData,
-            createdAt: sendData.createdAt.toDateString,
-            lastLogin: sendData.lastLogin.toDateString,
-            updatedAt: sendData.updateAt.toDateString,
+            created_at: sendData.created_at.toDateString,
+            last_login: sendData.last_login.toDateString,
+            updated_at: sendData.updated_at.toDateString,
           }),
         );
       }
@@ -110,14 +114,14 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
             onPress={async () => {
               const pickedImage = await pickImage('galery');
               if (pickedImage != null) {
-                setUserImage(pickedImage.uri);
+                setUserImage(pickedImage);
               }
             }}
             style={{ alignSelf: 'center', marginBottom: Spacing.l }}
           >
             {userImage ? (
               <FastImage
-                source={{ uri: userImage }}
+                source={{ uri: userImage.uri }}
                 style={styles.image}
                 resizeMode="cover"
               />
@@ -135,7 +139,7 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
           {userImage ? (
             <TouchableOpacity
               style={styles.deleteImage}
-              onPress={() => setUserImage(null)}
+              onPress={() => setUserImage({ uri: '', base64: null })}
             >
               <MaterialCommunityIcons name="close" size={14} />
             </TouchableOpacity>

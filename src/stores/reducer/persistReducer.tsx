@@ -1,28 +1,43 @@
+import { User } from '@/types/userModel';
 import { createSlice } from '@reduxjs/toolkit';
-const initialState = {
-  userData: {
-    uid: '',
-    email: '',
-    emailVerified: false,
-    displayName: '',
-    photoURL: '',
-    address: {
-      city: '',
-      streetAddress: '',
-      zipCode: '',
-    },
-    createdAt: '',
-    favorites: [] as string[],
-    lastLogin: '',
-    phoneNumber: '',
-    updateAt: '',
-  },
+import { Session } from '@supabase/supabase-js';
+
+type PersistState = {
+  session: Session | null;
+  userData: Omit<User, 'created_at' | 'last_login' | 'updated_at'> & {
+    created_at: string;
+    last_login: string;
+    updated_at: string;
+  };
+};
+
+export const INITIAL_USER = {
+  uid: '',
+  email: '',
+  display_name: '',
+  photo_url: '',
+  address_city: '',
+  address_street_address: '',
+  address_zip_code: '',
+  favorites: [],
+  phone_number: 0,
+  created_at: '',
+  last_login: '',
+  updated_at: '',
+}
+
+const initialState: PersistState = {
+  session: null,
+  userData: INITIAL_USER,
 };
 
 export const persistSlice = createSlice({
   name: 'persist',
   initialState,
   reducers: {
+    setSession: (state, action) => {
+      state.session = action.payload;
+    },
     setUser: (state, action) => {
       const newUserData = { ...state.userData, ...action.payload };
       state.userData = newUserData;
@@ -43,7 +58,12 @@ export const persistSlice = createSlice({
   },
 });
 
-export const { setUser, resetUser, addRdxFavourite, removeRdxFavourite } =
-  persistSlice.actions;
+export const {
+  setSession,
+  setUser,
+  resetUser,
+  addRdxFavourite,
+  removeRdxFavourite,
+} = persistSlice.actions;
 
 export default persistSlice.reducer;

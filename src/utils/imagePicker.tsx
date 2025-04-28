@@ -1,11 +1,15 @@
 import * as ImagePicker from 'expo-image-picker';
 import { Alert, Linking } from 'react-native';
 
-export default async function pickImage(type: 'camera' | 'galery') {
+export default async function pickImage(
+  type: 'camera' | 'galery',
+  base64 = false,
+) {
   const { status: cameraStatus } =
     await ImagePicker.requestCameraPermissionsAsync();
   const { status: mediaStatus } =
     await ImagePicker.requestMediaLibraryPermissionsAsync();
+
   if (mediaStatus != 'granted' || cameraStatus != 'granted') {
     return Alert.alert(
       'Error',
@@ -29,6 +33,7 @@ export default async function pickImage(type: 'camera' | 'galery') {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.5,
+      base64,
     });
   } else {
     // No permissions request is necessary for launching the image library
@@ -37,11 +42,12 @@ export default async function pickImage(type: 'camera' | 'galery') {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.5,
+      base64,
     });
   }
 
   if (!result.canceled) {
-    return { uri: result.assets[0].uri };
+    return { uri: result.assets[0].uri, base64: result.assets[0].base64 };
   }
 
   return;

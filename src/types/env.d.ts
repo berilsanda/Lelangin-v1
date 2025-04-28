@@ -7,4 +7,7 @@ declare module '@env' {
   export const STORAGE_BUCKET: string;
   export const MESSAGE_SENDER_ID: string;
   export const APP_ID: string;
+
+  export const SUPABASE_URL: string;
+  export const SUPABASE_ANON_KEY: string;
 }

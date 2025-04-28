@@ -11,12 +11,12 @@ import {
   StyleSheet,
   Text,
 } from 'react-native';
-import { UserLogin } from 'src/services/firebase';
 import * as yup from 'yup';
 
 import { AppTextInputs, Buttons } from '@/components/atoms';
 import { Colors, Spacing, Typography } from '@/config/constant';
 import { StackParamList } from '@/types/navigation/MainNavigationType';
+import { UserLogin } from '@/services/supabase';
 
 type LoginData = { email: string; password: string };
 
