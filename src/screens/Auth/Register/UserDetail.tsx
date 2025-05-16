@@ -63,36 +63,44 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
     try {
       const registerUser = await UserRegister(params.email, params.password);
 
-      if (registerUser) {
-        const pathToUpload = `${registerUser.user?.id}/user_image${userImage.uri.slice(userImage.uri.length - 4)}`;
-        const photo = await UploadUserImage(userImage.base64!, pathToUpload);
-
-        const sendData: User = {
-          address_city: data.city,
-          address_street_address: data.streetAddress,
-          address_zip_code: data.zipCode,
-          created_at: new Date(),
-          display_name: params.displayName,
-          email: params.email,
-          favorites: [],
-          last_login: new Date(),
-          phone_number: parseInt(data.phoneNumber),
-          photo_url: photo,
-          uid: registerUser.user!.id,
-          updated_at: new Date(),
-        };
-
-        await createUser(sendData);
-
-        dispatch(
-          setUser({
-            ...sendData,
-            created_at: sendData.created_at.toDateString,
-            last_login: sendData.last_login.toDateString,
-            updated_at: sendData.updated_at.toDateString,
-          }),
-        );
+      if (registerUser.error) {
+        throw new Error(registerUser.error.message);
       }
+
+      console.log('register data: ', registerUser);
+      
+      const pathToUpload = `${registerUser.data.user!.id}/user_image.${userImage.uri.slice(userImage.uri.length - 4)}`;
+      console.log('upload path: ',pathToUpload)
+      console.log('user image: ', userImage)
+      const photo = await UploadUserImage(userImage.base64!, pathToUpload);
+      console.log('photourl: ', photo)
+
+      const sendData: User = {
+        address_city: data.city,
+        address_street_address: data.streetAddress,
+        address_zip_code: data.zipCode,
+        created_at: new Date(),
+        display_name: params.displayName,
+        email: params.email,
+        favorites: [],
+        last_login: new Date(),
+        phone_number: parseInt(data.phoneNumber),
+        photo_url: photo,
+        uid: registerUser.data.user!.id,
+        updated_at: new Date(),
+      };
+
+      console.log('send data: ', sendData);
+      await createUser(sendData);
+
+      dispatch(
+        setUser({
+          ...sendData,
+          created_at: sendData.created_at.toDateString(),
+          last_login: sendData.last_login.toDateString(),
+          updated_at: sendData.updated_at.toDateString(),
+        }),
+      );
       reset();
       navigation.navigate('SplashScreen');
     } catch (error: any) {
@@ -112,7 +120,7 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={async () => {
-              const pickedImage = await pickImage('galery');
+              const pickedImage = await pickImage('galery', true);
               if (pickedImage != null) {
                 setUserImage(pickedImage);
               }

@@ -1,4 +1,4 @@
-import { UserRegisterData } from "@/screens/Register/Register";
+import { UserRegisterData } from "@/screens/Auth/Register/Register";
 
 export type StackParamList = {
     HomeNav: undefined;

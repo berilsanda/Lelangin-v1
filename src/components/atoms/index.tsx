@@ -2,6 +2,7 @@ import AppDateTimePicker from './App/AppDateTimePicker';
 import AppTextInputMasks from './App/AppTextInputMasks';
 import AppTextInputs from './App/AppTextInputs';
 import AppModals from './App/AppModals';
+import Banner from './Banner';
 import Buttons from './Buttons';
 import CountdownTimer from './CountdownTimer';
 import Divider from './Divider';
@@ -19,6 +20,7 @@ export {
   AppTextInputMasks,
   AppTextInputs,
   AppModals,
+  Banner,
   Buttons,
   CountdownTimer,
   Divider,

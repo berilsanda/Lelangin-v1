@@ -16,8 +16,8 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 
 export async function UserRegister(email: string, password: string) {
   try {
-    const { data } = await supabase.auth.signUp({ email, password });
-    return data;
+    const response = await supabase.auth.signUp({ email, password });
+    return response;
   } catch (error: any) {
     throw new Error(error.message);
   }
@@ -35,7 +35,13 @@ export async function UserRegister(email: string, password: string) {
  */
 export async function UploadUserImage(image: string, path: string) {
   try {
-    await supabase.storage.from('user-image').upload(path, decode(image));
+    const { error} = await supabase.storage.from('user-image').upload(path, decode(image), {
+      contentType: 'image/jpeg',
+    });
+    console.log(error)
+    if (error) {
+      throw new Error(error.message);
+    }
 
     const { data } = supabase.storage.from('user-image').getPublicUrl(path);
 
@@ -57,8 +63,8 @@ export async function createUser(body: User) {
 
 export async function UserLogin(email: string, password: string) {
   try {
-    const { data } = await supabase.auth.signInWithPassword({ email, password });
-    return data;
+    const response = await supabase.auth.signInWithPassword({ email, password });
+    return response;
   } catch (error: any) {
     throw new Error(error.message);
   }

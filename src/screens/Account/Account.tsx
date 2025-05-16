@@ -2,7 +2,7 @@ import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { CommonActions } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { signOut } from 'firebase/auth';
+
 import React, { useState } from 'react';
 import {
   View,
@@ -23,6 +23,7 @@ import { resetUser, setUser } from '@/stores/reducer/persistReducer';
 import pickImage from '@/utils/imagePicker';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { AccountStackParamList } from '@/types/navigation/AccountNavigationType';
+import supabase from '@/services/supabase';
 
 type Props = NativeStackScreenProps<AccountStackParamList, 'Account'>;
 
@@ -33,19 +34,19 @@ export default function Account({ navigation }: Props) {
   const [modalVisible, setModalVisible] = useState(false);
 
   const userData = useAppSelector((state) => state.persist.userData);
-  const [userName, setUserName] = useState<string | null>(userData.displayName);
-  const [userImage, setUserImage] = useState<string | null>(userData.photoURL);
+  const [userName, setUserName] = useState<string | null>(userData.display_name);
+  const [userImage, setUserImage] = useState<string | null>(userData.photo_url);
 
   function onCloseModal() {
-    setUserName(userData?.displayName);
-    setUserImage(userData?.photoURL);
+    setUserName(userData?.display_name);
+    setUserImage(userData?.photo_url);
     setModalVisible(false);
   }
 
   async function onSignOut() {
     setLoading(true);
     try {
-      await signOut(auth);
+      await supabase.auth.signOut();
       dispatch(resetUser());
       navigation.dispatch(
         CommonActions.reset({
@@ -125,9 +126,9 @@ export default function Account({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        {userData?.photoURL ? (
+        {userData?.photo_url ? (
           <FastImage
-            source={{ uri: userData?.photoURL }}
+            source={{ uri: userData?.photo_url }}
             style={styles.image}
             resizeMode="cover"
           />
@@ -143,7 +144,7 @@ export default function Account({ navigation }: Props) {
 
         <View style={{ flex: 1 }}>
           <Text style={Typography.label2}>
-            {userData.displayName || 'Belum ada nama'}
+            {userData.display_name || 'Belum ada nama'}
           </Text>
           <Text
             style={{ ...Typography.paragraph3, color: Colors.textSecondary }}

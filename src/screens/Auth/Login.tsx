@@ -13,10 +13,15 @@ import {
 } from 'react-native';
 import * as yup from 'yup';
 
-import { AppTextInputs, Buttons } from '@/components/atoms';
+import { AppTextInputs, Banner, Buttons } from '@/components/atoms';
 import { Colors, Spacing, Typography } from '@/config/constant';
 import { StackParamList } from '@/types/navigation/MainNavigationType';
 import { UserLogin } from '@/services/supabase';
+import Animated, {
+  FadeInDown,
+  FadeOutUp,
+  LinearTransition,
+} from 'react-native-reanimated';
 
 type LoginData = { email: string; password: string };
 
@@ -38,6 +43,7 @@ type Props = NativeStackScreenProps<StackParamList, 'Login'>;
 
 export default function Login({ navigation }: Props) {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(schema),
@@ -45,8 +51,14 @@ export default function Login({ navigation }: Props) {
 
   async function onSubmit(data: LoginData) {
     setLoading(true);
+    setError('');
     try {
-      await UserLogin(data.email, data.password);
+      const response = await UserLogin(data.email, data.password);
+
+      if (response.error) {
+        return setError(response.error.message);
+      }
+
       reset();
       navigation.navigate('SplashScreen');
     } catch (error: any) {
@@ -56,6 +68,8 @@ export default function Login({ navigation }: Props) {
     }
   }
 
+  const AnimatedBanner = Animated.createAnimatedComponent(Banner);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
@@ -64,6 +78,15 @@ export default function Login({ navigation }: Props) {
           resizeMode="contain"
           source={require('assets/logo.png')}
         />
+        {error && (
+          <AnimatedBanner
+            layout={LinearTransition}
+            entering={FadeInDown}
+            exiting={FadeOutUp}
+            type="error"
+            description={error}
+          />
+        )}
         <AppTextInputs
           name="email"
           label="Email"

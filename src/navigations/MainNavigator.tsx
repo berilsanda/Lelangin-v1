@@ -2,13 +2,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AddAuction from 'src/screens/AddAuction';
 import DetailAuction from 'src/screens/DetailAuction';
 import FavouriteAuction from 'src/screens/FavouriteAuction';
-import UserDetail from 'src/screens/Register/UserDetail';
+import UserDetail from '@/screens/Auth/Register/UserDetail';
 import SplashScreen from 'src/screens/SplashScreen';
 
 import HomeNavigator from './HomeNavigator';
 
-import Login from '@/screens/Login';
-import Register from '@/screens/Register/Register';
+import Login from '@/screens/Auth/Login';
+import Register from '@/screens/Auth/Register/Register';
 import { StackParamList } from '@/types/navigation/MainNavigationType';
 
 const Stack = createNativeStackNavigator<StackParamList>();
