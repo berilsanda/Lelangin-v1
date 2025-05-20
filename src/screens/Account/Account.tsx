@@ -17,13 +17,12 @@ import FastImage from 'react-native-fast-image';
 
 import { AppModals, Buttons, TextInputs } from '@/components/atoms';
 import { Colors, Spacing, Typography } from '@/config/constant';
-import { auth, updateUser } from '@/services/firebase';
-import uploadImageAsync from '@/services/uploadImageAsync';
+
 import { resetUser, setUser } from '@/stores/reducer/persistReducer';
 import pickImage from '@/utils/imagePicker';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { AccountStackParamList } from '@/types/navigation/AccountNavigationType';
-import supabase from '@/services/supabase';
+import supabase, { updateUser, UploadUserImage } from '@/services/supabase';
 
 type Props = NativeStackScreenProps<AccountStackParamList, 'Account'>;
 
@@ -34,12 +33,20 @@ export default function Account({ navigation }: Props) {
   const [modalVisible, setModalVisible] = useState(false);
 
   const userData = useAppSelector((state) => state.persist.userData);
-  const [userName, setUserName] = useState<string | null>(userData.display_name);
-  const [userImage, setUserImage] = useState<string | null>(userData.photo_url);
+  const [userName, setUserName] = useState<string | null>(
+    userData.display_name,
+  );
+  const [userImage, setUserImage] = useState<{
+    uri: string;
+    base64?: string | null;
+  }>({
+    uri: '',
+    base64: null,
+  });
 
   function onCloseModal() {
     setUserName(userData?.display_name);
-    setUserImage(userData?.photo_url);
+    setUserImage((prev) => ({ ...prev, uri: userData?.photo_url }));
     setModalVisible(false);
   }
 
@@ -77,13 +84,14 @@ export default function Account({ navigation }: Props) {
 
     setLoadingModal(true);
     try {
-      const pathToUpload = `User/${userData.uid}/Profil`;
-      const photo = await uploadImageAsync(userImage!, pathToUpload, `photo`);
+      const pathToUpload = `${userData.uid}/user_image.${userImage.uri.slice(userImage.uri.length - 4)}`;
+
+      const photo = await UploadUserImage(userImage.base64!, pathToUpload);
 
       await updateUser({
-        id: userData.uid,
-        displayName: userName,
-        photoURL: photo,
+        uid: userData.uid,
+        display_name: userName || '',
+        photo_url: photo,
       });
 
       dispatch(setUser({ displayName: userName, photoURL: photo }));
@@ -194,16 +202,16 @@ export default function Account({ navigation }: Props) {
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={async () => {
-                  const pickedImage = await pickImage('galery');
+                  const pickedImage = await pickImage('galery', true);
                   if (pickedImage != null) {
-                    setUserImage(pickedImage.uri);
+                    setUserImage(pickedImage);
                   }
                 }}
                 style={{ alignSelf: 'center', marginBottom: Spacing.l }}
               >
                 {userImage ? (
                   <FastImage
-                    source={{ uri: userImage }}
+                    source={{ uri: userImage.uri }}
                     style={styles.image}
                     resizeMode="cover"
                   />
@@ -221,7 +229,7 @@ export default function Account({ navigation }: Props) {
               {userImage ? (
                 <TouchableOpacity
                   style={styles.deleteImage}
-                  onPress={() => setUserImage(null)}
+                  onPress={() => setUserImage({ uri: '', base64: null })}
                 >
                   <MaterialCommunityIcons name="close" size={14} />
                 </TouchableOpacity>

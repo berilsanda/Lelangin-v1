@@ -35,10 +35,12 @@ export async function UserRegister(email: string, password: string) {
  */
 export async function UploadUserImage(image: string, path: string) {
   try {
-    const { error} = await supabase.storage.from('user-image').upload(path, decode(image), {
-      contentType: 'image/jpeg',
-    });
-    console.log(error)
+    const { error } = await supabase.storage
+      .from('user-image')
+      .upload(path, decode(image), {
+        contentType: 'image/jpeg',
+      });
+    console.log(error);
     if (error) {
       throw new Error(error.message);
     }
@@ -53,9 +55,30 @@ export async function UploadUserImage(image: string, path: string) {
 
 export async function createUser(body: User) {
   try {
-    await supabase
+    await supabase.from('users').insert(body);
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
+
+export async function updateUser({
+  uid,
+  display_name,
+  photo_url,
+}: {
+  uid: string;
+  display_name: string;
+  photo_url: string;
+}) {
+  try {
+    const { error } = await supabase
       .from('users')
-      .insert(body);
+      .update({ display_name: display_name, photo_url: photo_url })
+      .eq('uid', uid);
+
+    if (error) {
+      throw new Error(error.message);
+    }
   } catch (error: any) {
     throw new Error(error.message);
   }
@@ -63,7 +86,10 @@ export async function createUser(body: User) {
 
 export async function UserLogin(email: string, password: string) {
   try {
-    const response = await supabase.auth.signInWithPassword({ email, password });
+    const response = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     return response;
   } catch (error: any) {
     throw new Error(error.message);

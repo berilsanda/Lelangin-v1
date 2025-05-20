@@ -67,13 +67,10 @@ export default function UserDetail({ navigation, route: { params } }: Props) {
         throw new Error(registerUser.error.message);
       }
 
-      console.log('register data: ', registerUser);
-      
       const pathToUpload = `${registerUser.data.user!.id}/user_image.${userImage.uri.slice(userImage.uri.length - 4)}`;
-      console.log('upload path: ',pathToUpload)
-      console.log('user image: ', userImage)
+      
       const photo = await UploadUserImage(userImage.base64!, pathToUpload);
-      console.log('photourl: ', photo)
+      
 
       const sendData: User = {
         address_city: data.city,
