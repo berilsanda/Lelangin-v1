@@ -40,10 +40,9 @@ export default function Account({ navigation }: Props) {
     uri: string;
     base64?: string | null;
   }>({
-    uri: '',
+    uri: userData.photo_url || '',
     base64: null,
   });
-
   function onCloseModal() {
     setUserName(userData?.display_name);
     setUserImage((prev) => ({ ...prev, uri: userData?.photo_url }));
@@ -74,6 +73,8 @@ export default function Account({ navigation }: Props) {
 
   async function onSubmit() {
     //Validation
+    console.log('user name: ', userName);
+    console.log('user image: ', userImage);
     if (userImage == null || userName!.trim().length == 0) {
       return Alert.alert('', 'Data tidak boleh kosong!');
     }
@@ -86,15 +87,17 @@ export default function Account({ navigation }: Props) {
     try {
       const pathToUpload = `${userData.uid}/user_image.${userImage.uri.slice(userImage.uri.length - 4)}`;
 
-      const photo = await UploadUserImage(userImage.base64!, pathToUpload);
-
+      const photo = userImage.base64
+        ? await UploadUserImage(userImage.base64, pathToUpload, true)
+        : userImage.uri;
+      
       await updateUser({
         uid: userData.uid,
         display_name: userName || '',
         photo_url: photo,
       });
 
-      dispatch(setUser({ displayName: userName, photoURL: photo }));
+      dispatch(setUser({ display_name: userName, photo_url: photo }));
       setModalVisible(false);
     } catch (error: any) {
       Alert.alert('Gagal', error.message);

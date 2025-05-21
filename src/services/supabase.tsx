@@ -28,21 +28,37 @@ export async function UserRegister(email: string, password: string) {
  *
  * @param image Base64 encoded string of the user's image.
  * @param path Path to upload the image to.
+ * @param update Whether to update the image or upload a new one.
  *
  * @returns A public URL where the image can be accessed.
  *
  * @throws An error if the upload failed.
  */
-export async function UploadUserImage(image: string, path: string) {
+export async function UploadUserImage(
+  image: string,
+  path: string,
+  update = false,
+) {
   try {
-    const { error } = await supabase.storage
-      .from('user-image')
-      .upload(path, decode(image), {
-        contentType: 'image/jpeg',
-      });
-    console.log(error);
-    if (error) {
-      throw new Error(error.message);
+    if (update) {
+      const { error } = await supabase.storage
+        .from('user-image')
+        .update(path, decode(image), {
+          contentType: 'image/jpeg',
+          upsert: true,
+        });
+      if (error) {
+        throw new Error(error.message);
+      }
+    } else {
+      const { error } = await supabase.storage
+        .from('user-image')
+        .upload(path, decode(image), {
+          contentType: 'image/jpeg',
+        });
+      if (error) {
+        throw new Error(error.message);
+      }
     }
 
     const { data } = supabase.storage.from('user-image').getPublicUrl(path);
